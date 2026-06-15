@@ -1,0 +1,22 @@
+{
+  "name": "personal-skills",
+  "owner": {
+    "name": "Mostafa",
+    "email": "mostafaxcodes@gmail.com"
+  },
+  "metadata": {
+    "description": "My personal skills and automation workflows for Claude Code and AI agents",
+    "version": "1.0.0"
+  },
+  "plugins": [
+    {
+      "name": "personal-skills",
+      "description": "Collection of personal developer and productivity skills",
+      "source": "./",
+      "strict": false,
+      "skills": [
+        "./skills/git-workflow"
+      ]
+    }
+  ]
+}
