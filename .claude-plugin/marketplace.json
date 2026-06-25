@@ -15,7 +15,8 @@
       "source": "./",
       "strict": false,
       "skills": [
-        "./skills/git-workflow"
+        "./skills/git-workflow",
+        "./skills/writing-clearly-and-concisely"
       ]
     }
   ]

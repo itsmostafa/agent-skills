@@ -8,8 +8,10 @@ A private, curated repository of custom AI agent skills and automation workflows
 ├── .claude-plugin/
 │   └── marketplace.json    # Claude plugin marketplace catalog
 ├── skills/
-│   └── git-workflow/       # Custom skill for git workflows
-│       └── SKILL.md        # Git workflow instructions & guidelines
+│   ├── git-workflow/       # Custom skill for git workflows
+│   │   └── SKILL.md        # Git workflow instructions & guidelines
+│   └── writing-clearly-and-concisely/
+│       └── SKILL.md        # Clear, concise prose guidelines
 ├── .gitignore              # Ignored subdirectories & environment metadata
 └── README.md               # Repository overview
 ```
@@ -58,6 +60,7 @@ To add a new skill to this repository:
    ```json
    "skills": [
      "./skills/git-workflow",
+     "./skills/writing-clearly-and-concisely",
      "./skills/new-skill"
    ]
    ```
