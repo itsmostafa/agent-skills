@@ -1,21 +1,22 @@
 {
-  "name": "personal-skills",
+  "name": "agent-skills",
   "owner": {
     "name": "Mostafa",
     "email": "mostafaxcodes@gmail.com"
   },
   "metadata": {
-    "description": "My personal skills and automation workflows for Claude Code and AI agents",
+    "description": "Custom AI agent skills and automation workflows for Claude Code and OpenAI Codex",
     "version": "1.0.0"
   },
   "plugins": [
     {
-      "name": "personal-skills",
-      "description": "Collection of personal developer and productivity skills",
+      "name": "agent-skills",
+      "description": "Collection of custom developer and productivity skills",
       "source": "./",
       "strict": false,
       "skills": [
-        "./skills/git-workflow",
+        "./skills/systems-thinking",
+        "./skills/taskfile",
         "./skills/writing-clearly-and-concisely"
       ]
     }
