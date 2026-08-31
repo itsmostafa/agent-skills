@@ -66,19 +66,18 @@ Codex reads the same `.claude-plugin/marketplace.json` catalog.
 codex plugin marketplace add itsmostafa/agent-skills
 ```
 
-Codex names a Git marketplace after the repository, so this marketplace is
-called `agent-skills` (Claude Code calls it `itsmostafa`).
-
 #### 2. Install the Plugin
 
+The install id is the same one Claude Code uses:
+
 ```bash
-codex plugin add agent-skills@agent-skills
+codex plugin add agent-skills@itsmostafa
 ```
 
 Verify with `codex plugin list`. To pull later changes:
 
 ```bash
-codex plugin marketplace upgrade agent-skills
+codex plugin marketplace upgrade itsmostafa
 ```
 
 ### Adding New Skills
