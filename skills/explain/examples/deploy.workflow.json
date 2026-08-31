@@ -1,0 +1,20 @@
+{
+  "type": "workflow",
+  "title": "Compile loop",
+  "nodes": [
+    { "id": "write",  "label": "write JSON",  "kind": "external" },
+    { "id": "run",    "label": "run compile", "kind": "service" },
+    { "id": "gate",   "label": "validate",    "kind": "service" },
+    { "id": "fix",    "label": "fix by code", "kind": "external" },
+    { "id": "emit",   "label": "emit SVG",    "kind": "service" },
+    { "id": "done",   "label": "index.html",  "kind": "terminal" }
+  ],
+  "edges": [
+    { "from": "write", "to": "run" },
+    { "from": "run",   "to": "gate" },
+    { "from": "gate",  "to": "fix",  "label": "exit 1" },
+    { "from": "fix",   "to": "run",  "label": "retry", "back": true },
+    { "from": "gate",  "to": "emit", "label": "exit 0" },
+    { "from": "emit",  "to": "done" }
+  ]
+}

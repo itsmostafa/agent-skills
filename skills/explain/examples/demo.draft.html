@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><title>How /explain compiles diagrams</title></head>
+<body>
+<h1>How /explain compiles diagrams</h1>
+
+<p>You describe what a diagram means. The compiler works out every pixel.
+Here is what the skill is made of.</p>
+
+{{diagram: auth.architecture.json}}
+
+<p>The loop you actually run: write JSON, compile, fix whatever the validator
+names, compile again.</p>
+
+{{diagram: deploy.workflow.json}}
+
+<p>Inside one placeholder, the call order is fixed.</p>
+
+{{diagram: login.sequence.json}}
+
+<p>What changes shape as it moves through: semantics in, pixels out.</p>
+
+{{diagram: ingest.dataflow.json}}
+
+<p>And a single validator finding, from parse to clean compile.</p>
+
+{{diagram: order.lifecycle.json}}
+</body>
+</html>

@@ -1,0 +1,19 @@
+{
+  "type": "dataflow",
+  "title": "What flows through the compiler",
+  "nodes": [
+    { "id": "json",  "label": "typed IR",     "kind": "store" },
+    { "id": "rank",  "label": "rank + row",   "kind": "service" },
+    { "id": "boxes", "label": "boxes",        "kind": "service" },
+    { "id": "route", "label": "routes",       "kind": "service" },
+    { "id": "rects", "label": "label rects",  "kind": "service" },
+    { "id": "html",  "label": "inline SVG",   "kind": "terminal" }
+  ],
+  "edges": [
+    { "from": "json",  "to": "rank",  "label": "semantics" },
+    { "from": "rank",  "to": "boxes", "label": "integers" },
+    { "from": "boxes", "to": "route", "label": "pixels" },
+    { "from": "route", "to": "rects", "label": "polylines" },
+    { "from": "rects", "to": "html" }
+  ]
+}

@@ -1,0 +1,67 @@
+{
+  "type": "lifecycle",
+  "title": "A finding's life",
+  "nodes": [
+    {
+      "id": "start",
+      "label": "parsed",
+      "kind": "terminal",
+      "rank": 0,
+      "row": 0
+    },
+    {
+      "id": "check",
+      "label": "checked",
+      "kind": "service",
+      "rank": 1,
+      "row": 0
+    },
+    {
+      "id": "held",
+      "label": "reported",
+      "kind": "service",
+      "rank": 2,
+      "row": 1
+    },
+    {
+      "id": "fixed",
+      "label": "IR edited",
+      "kind": "external",
+      "rank": 3,
+      "row": 1
+    },
+    {
+      "id": "clean",
+      "label": "compiled",
+      "kind": "terminal",
+      "rank": 2,
+      "row": 0
+    }
+  ],
+  "edges": [
+    {
+      "from": "start",
+      "to": "check"
+    },
+    {
+      "from": "check",
+      "to": "held",
+      "label": "rule fires"
+    },
+    {
+      "from": "held",
+      "to": "fixed"
+    },
+    {
+      "from": "fixed",
+      "to": "check",
+      "label": "recheck",
+      "back": true
+    },
+    {
+      "from": "check",
+      "to": "clean",
+      "label": "no findings"
+    }
+  ]
+}

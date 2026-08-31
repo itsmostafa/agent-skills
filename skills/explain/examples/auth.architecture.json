@@ -1,0 +1,22 @@
+{
+  "type": "architecture",
+  "title": "Explain skill: how a page gets built",
+  "nodes": [
+    { "id": "skill",  "label": "SKILL.md",     "kind": "external", "src": "SKILL.md:1" },
+    { "id": "draft",  "label": "doc.draft.html", "kind": "external" },
+    { "id": "ir",     "label": "diagram JSON", "kind": "store" },
+    { "id": "valid",  "label": "validator",    "kind": "service", "src": "compile.py:1" },
+    { "id": "layout", "label": "layout",       "kind": "service" },
+    { "id": "svg",    "label": "SVG emitter",  "kind": "service" },
+    { "id": "page",   "label": "index.html",   "kind": "terminal" }
+  ],
+  "edges": [
+    { "from": "skill",  "to": "draft",  "label": "guides" },
+    { "from": "skill",  "to": "ir",     "label": "guides" },
+    { "from": "ir",     "to": "valid" },
+    { "from": "valid",  "to": "layout", "label": "clean IR" },
+    { "from": "layout", "to": "svg",    "label": "boxes" },
+    { "from": "svg",    "to": "page" },
+    { "from": "draft",  "to": "page",   "label": "prose" }
+  ]
+}
