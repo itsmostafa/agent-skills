@@ -19,3 +19,6 @@ Thumbs.db
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+
+# Built by skills/explain/compile.py --selftest
+skills/explain/examples/index.html

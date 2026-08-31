@@ -9,6 +9,11 @@ agent-skills/
 ├── .claude-plugin/
 │   └── marketplace.json       # Claude plugin marketplace catalog
 ├── skills/
+│   ├── explain/
+│   │   ├── examples/          # One runnable diagram per type
+│   │   ├── compile.py         # Deterministic diagram compiler
+│   │   ├── reference.md       # Diagram IR field list and rule codes
+│   │   └── SKILL.md           # Explains a topic as a self-contained HTML page
 │   ├── systems-thinking/
 │   │   └── SKILL.md           # Cause-and-effect reasoning for complex problems
 │   ├── taskfile/
@@ -24,6 +29,7 @@ agent-skills/
 
 ## Skills
 
+- `explain`: Explains a topic or part of a repository as a self-contained HTML page, with deterministically compiled architecture, workflow, sequence, data-flow, and lifecycle diagrams.
 - `systems-thinking`: Analyzes complex problems, root causes, constraints, tradeoffs, and potential side effects.
 - `taskfile`: Helps create, modify, and optimize Taskfiles using version 3 syntax.
 - `writing-clearly-and-concisely`: Applies practical rules for clear, concise prose and avoids common AI writing patterns.
@@ -36,13 +42,7 @@ These skills are packaged as a Claude Code plugin marketplace, allowing them to 
 
 #### 1. Add the Marketplace
 
-You can add this repository as a marketplace:
-
-```bash
-/plugin marketplace add /path/to/agent-skills
-```
-
-Or add the public GitHub repository:
+Add the public GitHub repository:
 
 ```bash
 /plugin marketplace add itsmostafa/agent-skills
@@ -53,7 +53,31 @@ Or add the public GitHub repository:
 Install the `agent-skills` plugin from the marketplace:
 
 ```bash
-/plugin install agent-skills@agent-skills
+/plugin install agent-skills@itsmostafa
+```
+
+### Installing in OpenAI Codex
+
+Codex reads the same `.claude-plugin/marketplace.json` catalog.
+
+#### 1. Add the Marketplace
+
+```bash
+codex plugin marketplace add itsmostafa/agent-skills
+```
+
+#### 2. Install the Plugin
+
+The install id is the same one Claude Code uses:
+
+```bash
+codex plugin add agent-skills@itsmostafa
+```
+
+Verify with `codex plugin list`. To pull later changes:
+
+```bash
+codex plugin marketplace upgrade itsmostafa
 ```
 
 ### Adding New Skills
@@ -73,6 +97,7 @@ To add a new skill to this repository:
 3. Register the new skill path in `.claude-plugin/marketplace.json` under the `skills` list:
    ```json
    "skills": [
+     "./skills/explain",
      "./skills/systems-thinking",
      "./skills/taskfile",
      "./skills/writing-clearly-and-concisely",

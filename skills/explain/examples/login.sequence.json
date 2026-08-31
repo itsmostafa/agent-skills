@@ -1,0 +1,19 @@
+{
+  "type": "sequence",
+  "title": "One placeholder becomes one diagram",
+  "participants": [
+    { "id": "build", "label": "build()",     "kind": "service", "src": "compile.py:801" },
+    { "id": "load",  "label": "load_ir()",   "kind": "service" },
+    { "id": "check", "label": "validator",   "kind": "service" },
+    { "id": "draw",  "label": "render()",    "kind": "store" }
+  ],
+  "messages": [
+    { "from": "build", "to": "load",  "label": "read JSON" },
+    { "from": "load",  "to": "build", "label": "dict", "style": "return" },
+    { "from": "build", "to": "check", "label": "validate" },
+    { "from": "check", "to": "check", "label": "verify src paths" },
+    { "from": "check", "to": "build", "label": "findings", "style": "return" },
+    { "from": "build", "to": "draw",  "label": "layout + emit" },
+    { "from": "draw",  "to": "build", "label": "SVG string", "style": "return" }
+  ]
+}
