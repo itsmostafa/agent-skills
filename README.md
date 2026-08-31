@@ -56,6 +56,31 @@ Install the `agent-skills` plugin from the marketplace:
 /plugin install agent-skills@itsmostafa
 ```
 
+### Installing in OpenAI Codex
+
+Codex reads the same `.claude-plugin/marketplace.json` catalog.
+
+#### 1. Add the Marketplace
+
+```bash
+codex plugin marketplace add itsmostafa/agent-skills
+```
+
+Codex names a Git marketplace after the repository, so this marketplace is
+called `agent-skills` (Claude Code calls it `itsmostafa`).
+
+#### 2. Install the Plugin
+
+```bash
+codex plugin add agent-skills@agent-skills
+```
+
+Verify with `codex plugin list`. To pull later changes:
+
+```bash
+codex plugin marketplace upgrade agent-skills
+```
+
 ### Adding New Skills
 
 To add a new skill to this repository:

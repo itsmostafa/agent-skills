@@ -113,6 +113,7 @@ Everything is reported in one pass, then the compiler exits 1 having written not
 | `E_LABEL_OVER_NODE` | an edge label lands on a box | move a node to a different `row` |
 | `E_LABEL_OVER_LABEL` | two edge labels collide | shorten one, or move a node |
 | `E_PLACEHOLDER_MISSING` | `{{diagram: x.json}}` has no such file | add the file or fix the name |
+| `E_PLACEHOLDER_ESCAPE` | `{{diagram: ...}}` points outside the draft directory | keep diagrams beside the draft |
 
 ## Worked examples
 

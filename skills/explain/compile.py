@@ -22,6 +22,7 @@ from pathlib import Path
 MARGIN, TITLE_H, PAD_X = 24, 34, 14
 BOX_H, SRC_H, MIN_W = 44, 16, 96
 RANK_GAP, ROW_GAP, LANE_GAP, LEGEND_H = 72, 28, 26, 26
+TITLE_CW = 9             # title char advance, matches .dg-title
 NF, NCW = 13, 8          # node label font size, monospace char advance
 EF, ECW = 11, 7          # edge label
 SF, SCW = 10, 6          # src caption
@@ -441,9 +442,23 @@ def classify_and_rank(nodes, edges, name):
 # ------------------------------------------------------------- graph layout
 
 def node_size(n):
-    widest_src = max([len(s) * SCW for s in src_list(n)] or [0])
+    widest_src = max((len(s) * SCW for s in src_list(n)), default=0)
     w = max(MIN_W, 2 * PAD_X + max(len(n["label"]) * NCW, widest_src))
     return w, BOX_H + SRC_H * len(src_list(n))
+
+
+def canvas(width, height, title, boxes):
+    """Final canvas size. The legend and the title stick out past the boxes."""
+    kinds = [k for k in KINDS if any(b["kind"] == k for b in boxes)]
+    if len(kinds) > 1:
+        legend_y = height
+        height += LEGEND_H
+        width = max(width, MARGIN + sum(38 + len(k) * SCW for k in kinds) + MARGIN)
+    else:
+        legend_y, kinds = 0, []
+    if title:
+        width = max(width, MARGIN + len(title) * TITLE_CW + MARGIN)
+    return width, height, kinds, legend_y
 
 
 def layout_graph(d, name):
@@ -456,9 +471,9 @@ def layout_graph(d, name):
     size = {n["id"]: node_size(n) for n in nodes}
     nranks = max(rank.values()) + 1
     nrows = max(row.values()) + 1
-    colw = [max([size[n["id"]][0] for n in nodes if rank[n["id"]] == r] or [MIN_W])
+    colw = [max(size[n["id"]][0] for n in nodes if rank[n["id"]] == r)
             for r in range(nranks)]
-    rowh = [max([size[n["id"]][1] for n in nodes if row[n["id"]] == k] or [BOX_H])
+    rowh = [max(size[n["id"]][1] for n in nodes if row[n["id"]] == k)
             for k in range(nrows)]
     # A direct edge parks its label in the corridor it crosses, so the corridor
     # has to be at least as wide as that label or the text rides onto a box.
@@ -511,7 +526,7 @@ def layout_graph(d, name):
             lanes += 1
         faces[a][fa].append(len(plans))
         faces[b][fb].append(len(plans))
-        plans.append({"e": e, "kind": kind, "fa": fa, "fb": fb, "lane": lanes - 1})
+        plans.append({"e": e, "kind": kind, "fa": fa, "fb": fb})
 
     port = {}
     for nid, sides in faces.items():
@@ -551,15 +566,11 @@ def layout_graph(d, name):
             lane_i += 1
         routed.append({"pts": pts, "label": e.get("label", ""), "dashed": False})
 
-    height = band_end + LANE_GAP * lanes + MARGIN
-    kinds = [k for k in KINDS if any(b["kind"] == k for b in placed)]
-    if len(kinds) > 1:
-        legend_y = height
-        height += LEGEND_H
-    else:
-        legend_y, kinds = 0, []
-    width = max(b["x"] + b["w"] for b in placed) + MARGIN
-    return {"w": width, "h": height, "title": d.get("title", ""),
+    title = d.get("title", "")
+    width, height, kinds, legend_y = canvas(
+        max(b["x"] + b["w"] for b in placed) + MARGIN,
+        band_end + LANE_GAP * lanes + MARGIN, title, placed)
+    return {"w": width, "h": height, "title": title,
             "nodes": placed, "edges": routed, "kinds": kinds,
             "legend_y": legend_y, "seq": False}
 
@@ -569,7 +580,10 @@ def layout_graph(d, name):
 def layout_sequence(d):
     parts, msgs = d["participants"], d["messages"]
     idx = {p["id"]: i for i, p in enumerate(parts)}
-    headw = [max(MIN_W, 2 * PAD_X + len(p["label"]) * NCW) for p in parts]
+    headw = [max(MIN_W, 2 * PAD_X + max(len(p["label"]) * NCW,
+                                        max((len(s) * SCW for s in src_list(p)),
+                                            default=0)))
+             for p in parts]
 
     gaps = [MIN_LGAP] * max(0, len(parts) - 1)
     for m in msgs:
@@ -611,18 +625,16 @@ def layout_sequence(d):
 
     boxes = []
     for i, p in enumerate(parts):
+        src = src_list(p)
         boxes.append({"id": p["id"], "x": cx[i] - headw[i] // 2, "y": head_y,
-                      "w": headw[i], "h": HEAD_H, "label": p["label"],
-                      "kind": p.get("kind", "service"), "src": []})
-    height = y + MARGIN
-    kinds = [k for k in KINDS if any(b["kind"] == k for b in boxes)]
-    if len(kinds) > 1:
-        legend_y = height
-        height += LEGEND_H
-    else:
-        legend_y, kinds = 0, []
-    width = max(cx[-1] + headw[-1] // 2 + SELF_W, right) + MARGIN
-    return {"w": width, "h": height, "title": d.get("title", ""),
+                      "w": headw[i], "h": HEAD_H + SRC_H * len(src),
+                      "label": p["label"], "kind": p.get("kind", "service"),
+                      "src": src, "lab_h": HEAD_H})
+    title = d.get("title", "")
+    width, height, kinds, legend_y = canvas(
+        max(cx[-1] + headw[-1] // 2 + SELF_W, right) + MARGIN,
+        y + MARGIN, title, boxes)
+    return {"w": width, "h": height, "title": title,
             "nodes": boxes, "edges": routed, "kinds": kinds,
             "legend_y": legend_y, "seq": True, "lifeline_to": y - MSG_STEP // 2}
 
@@ -699,7 +711,7 @@ def render(scene, uid):
                'markerWidth="7" markerHeight="6" orient="auto-start-reverse">'
                '<path class="dg-ah" d="M0,0 L9,4 L0,8 z"/></marker></defs>' % marker)
     if scene["title"]:
-        out.append(svg_text("dg-title", MARGIN, MARGIN + 18, scene["title"], 9, "start"))
+        out.append(svg_text("dg-title", MARGIN, MARGIN + 18, scene["title"], TITLE_CW, "start"))
 
     if scene["seq"]:
         out.append('<g class="dg-lifelines">')
@@ -722,11 +734,12 @@ def render(scene, uid):
         out.append('<g class="dg-n k-%s">' % box["kind"])
         out.append('<rect x="%d" y="%d" width="%d" height="%d" rx="%d"/>'
                    % (box["x"], box["y"], box["w"], box["h"], rx))
-        base = box["y"] + (BOX_H // 2 + 5 if box["src"] else box["h"] // 2 + 5)
+        lab_h = box.get("lab_h", BOX_H)
+        base = box["y"] + (lab_h // 2 + 5 if box["src"] else box["h"] // 2 + 5)
         out.append(svg_text("dg-nl", box["x"] + box["w"] // 2, base, box["label"], NCW))
         for i, line in enumerate(box["src"]):
             out.append(svg_text("dg-src", box["x"] + box["w"] // 2,
-                                box["y"] + BOX_H + 4 + i * SRC_H, line, SCW))
+                                box["y"] + lab_h + 4 + i * SRC_H, line, SCW))
         out.append("</g>")
     out.append("</g>")
 
@@ -761,6 +774,10 @@ def compile_one(path, root, uid):
     name = os.path.basename(path)
     d = load_ir(path)
     if d is None:
+        return None
+    if not isinstance(d, dict):
+        err("E_FIELD_TYPE", name,
+            "a diagram is a JSON object, got %s" % type(d).__name__)
         return None
     kind = d.get("type")
     if kind not in ALL_TYPES:
@@ -801,6 +818,12 @@ def build(draft, root):
         target = os.path.join(base, ref)
         pieces.append(page[cut:match.start()])
         cut = match.end()
+        try:
+            Path(target).resolve().relative_to(Path(base).resolve())
+        except (ValueError, OSError):
+            err("E_PLACEHOLDER_ESCAPE", os.path.basename(draft),
+                "%r resolves outside the draft directory" % ref)
+            continue
         if not os.path.isfile(target):
             err("E_PLACEHOLDER_MISSING", os.path.basename(draft),
                 "no diagram %r beside the draft" % ref)
