@@ -64,6 +64,10 @@ The compiler does structure, not numbers. For a bar or line chart of real figure
 repo, hand-write inline `<svg>` in the draft as before — that stays allowed, and the
 compiler leaves it alone.
 
+It gets none of the compiled styling. Set your own `font-family`, `fill:currentColor`,
+a width near 900px, and text at prose size (~16px) — chart text smaller than the
+paragraphs around it reads as a mistake.
+
 ## Reference
 
 `reference.md` — full IR field list, every rule code with its fix, and one worked example
