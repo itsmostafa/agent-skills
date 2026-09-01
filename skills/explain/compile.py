@@ -19,14 +19,14 @@ from pathlib import Path
 
 # ---------------------------------------------------------------- constants
 
-MARGIN, TITLE_H, PAD_X = 24, 34, 14
-BOX_H, SRC_H, MIN_W = 44, 16, 96
+MARGIN, TITLE_H, PAD_X = 24, 38, 14
+BOX_H, SRC_H, MIN_W = 48, 18, 96
 RANK_GAP, ROW_GAP, LANE_GAP, LEGEND_H = 72, 28, 26, 26
-TITLE_CW = 9             # title char advance, matches .dg-title
-NF, NCW = 13, 8          # node label font size, monospace char advance
-EF, ECW = 11, 7          # edge label
-SF, SCW = 10, 6          # src caption
-HEAD_H, MSG_STEP = 40, 40
+TITLE_CW = 10            # title char advance, matches .dg-title
+NF, NCW = 15, 9          # node label font size, monospace char advance
+EF, ECW = 13, 8          # edge label
+SF, SCW = 12, 7          # src caption
+HEAD_H, MSG_STEP = 44, 40
 SELF_W, SELF_H, MIN_LGAP = 44, 34, 48
 
 ALL_TYPES = ("architecture", "workflow", "dataflow", "lifecycle", "sequence")
@@ -85,10 +85,12 @@ html{color-scheme:light dark}
 body{background:var(--dg-bg);color:var(--dg-fg);
      margin:0 auto;padding:2rem 1.25rem;max-width:60rem;line-height:1.6;
      font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
-.dg{max-width:100%;height:auto;display:block;margin:1.4rem 0;
+/* Full-bleed: inside the 60rem column a wide diagram is shrunk, type and all. */
+.dg{max-width:calc(100vw - 3rem);height:auto;display:block;margin:1.4rem 0;
+    position:relative;left:50%;transform:translateX(-50%);
     font-family:ui-monospace,SFMono-Regular,Menlo,"DejaVu Sans Mono",monospace}
 .dg text{fill:var(--dg-fg)}
-.dg .dg-title{font-size:15px;font-weight:600}
+.dg .dg-title{font-size:17px;font-weight:600}
 .dg .dg-src{fill:var(--dg-muted)}
 .dg .dg-lifeline{stroke:var(--dg-edge);stroke-width:1;stroke-dasharray:3 4}
 .dg .dg-e{fill:none;stroke:var(--dg-edge);stroke-width:1.5}
@@ -735,11 +737,11 @@ def render(scene, uid):
         out.append('<rect x="%d" y="%d" width="%d" height="%d" rx="%d"/>'
                    % (box["x"], box["y"], box["w"], box["h"], rx))
         lab_h = box.get("lab_h", BOX_H)
-        base = box["y"] + (lab_h // 2 + 5 if box["src"] else box["h"] // 2 + 5)
+        base = box["y"] + (lab_h // 2 + 6 if box["src"] else box["h"] // 2 + 6)
         out.append(svg_text("dg-nl", box["x"] + box["w"] // 2, base, box["label"], NCW))
         for i, line in enumerate(box["src"]):
             out.append(svg_text("dg-src", box["x"] + box["w"] // 2,
-                                box["y"] + lab_h + 4 + i * SRC_H, line, SCW))
+                                box["y"] + lab_h + 5 + i * SRC_H, line, SCW))
         out.append("</g>")
     out.append("</g>")
 
@@ -750,7 +752,7 @@ def render(scene, uid):
             continue
         out.append('<rect class="dg-elb" x="%d" y="%d" width="%d" height="%d"/>'
                    % (rect["x"], rect["y"], rect["w"], rect["h"]))
-        out.append(svg_text("dg-el", rect["cx"], rect["cy"] + 4, rect["text"], ECW))
+        out.append(svg_text("dg-el", rect["cx"], rect["cy"] + 5, rect["text"], ECW))
     out.append("</g>")
 
     if scene["kinds"]:
