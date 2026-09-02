@@ -35,6 +35,11 @@ KINDS = ("service", "store", "external", "terminal")
 MSG_STYLES = ("call", "return", "async")
 
 MAX_NODE_LABEL, MAX_EDGE_LABEL, MAX_MSG_LABEL = 48, 32, 40
+COLUMN_W = 960           # the prose column, 60rem, in px -- see body{} in CSS
+# A title is a full-width line of its own, so it alone can push a graph past the
+# column: (COLUMN_W - 2 * MARGIN) // TITLE_CW. Capped here, where the fix is to
+# shorten the title, rather than reported later as a diagram that is too wide.
+MAX_TITLE = 91
 
 NODE_SPEC = {
     "id": (str, True), "label": (str, True), "kind": (str, False),
@@ -85,9 +90,12 @@ html{color-scheme:light dark}
 body{background:var(--dg-bg);color:var(--dg-fg);
      margin:0 auto;padding:2rem 1.25rem;max-width:60rem;line-height:1.6;
      font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
-/* Full-bleed: inside the 60rem column a wide diagram is shrunk, type and all. */
-.dg{max-width:calc(100vw - 3rem);height:auto;display:block;margin:1.4rem 0;
-    position:relative;left:50%;transform:translateX(-50%);
+/* The frame is the prose column, so a diagram starts and ends where the
+   paragraphs do. Graphs fit inside it by rule (E_TOO_WIDE); a sequence, which
+   is horizontal by nature, scrolls instead of being scaled down -- shrinking it
+   would put its type below the size of the text around it. */
+.dg-wrap{overflow-x:auto;margin:1.4rem 0}
+.dg{display:block;height:auto;
     font-family:ui-monospace,SFMono-Regular,Menlo,"DejaVu Sans Mono",monospace}
 .dg text{fill:var(--dg-fg)}
 .dg .dg-title{font-size:17px;font-weight:600}
@@ -203,6 +211,16 @@ def src_list(node):
     return [raw] if isinstance(raw, str) else raw
 
 
+def src_labels(node):
+    """What a box prints: file name and line, not the whole repo path.
+
+    A path like lakewatch/dasl-apiserver/src/export/V1Exporter.scala:57 pins the
+    box three times wider than its own label. The directory is still checked,
+    and still readable in the node's tooltip -- it just stops setting the width.
+    """
+    return [os.path.basename(s) for s in src_list(node)]
+
+
 def check_src(node, root, where):
     raw = node.get("src")
     if raw is None:
@@ -253,6 +271,8 @@ def check_graph(d, root, name):
     start = len(FINDINGS)
     if not check_obj(d, GRAPH_SPEC, name):
         return False
+    if d.get("title"):
+        check_label(d["title"], MAX_TITLE, "%s.title" % name)
     nodes, edges = d["nodes"], d.get("edges") or []
     if not nodes:
         err("E_EMPTY", "%s.nodes" % name, "a diagram needs at least one node")
@@ -306,6 +326,8 @@ def check_sequence(d, root, name):
     start = len(FINDINGS)
     if not check_obj(d, SEQ_SPEC, name):
         return False
+    if d.get("title"):
+        check_label(d["title"], MAX_TITLE, "%s.title" % name)
     parts, msgs = d["participants"], d["messages"]
     if len(parts) < 2:
         err("E_EMPTY", "%s.participants" % name, "a sequence needs at least two")
@@ -444,7 +466,7 @@ def classify_and_rank(nodes, edges, name):
 # ------------------------------------------------------------- graph layout
 
 def node_size(n):
-    widest_src = max((len(s) * SCW for s in src_list(n)), default=0)
+    widest_src = max((len(s) * SCW for s in src_labels(n)), default=0)
     w = max(MIN_W, 2 * PAD_X + max(len(n["label"]) * NCW, widest_src))
     return w, BOX_H + SRC_H * len(src_list(n))
 
@@ -472,106 +494,150 @@ def layout_graph(d, name):
 
     size = {n["id"]: node_size(n) for n in nodes}
     nranks = max(rank.values()) + 1
-    nrows = max(row.values()) + 1
-    colw = [max(size[n["id"]][0] for n in nodes if rank[n["id"]] == r)
-            for r in range(nranks)]
-    rowh = [max(size[n["id"]][1] for n in nodes if row[n["id"]] == k)
-            for k in range(nrows)]
-    # A direct edge parks its label in the corridor it crosses, so the corridor
-    # has to be at least as wide as that label or the text rides onto a box.
-    gapw = [RANK_GAP] * max(0, nranks - 1)
-    for e in edges:
-        r = rank[e["from"]]
-        if rank[e["to"]] == r + 1 and e.get("label"):
-            gapw[r] = max(gapw[r], len(e["label"]) * ECW + 24)
+    # Ranks stack down the page and rows spread across it, so the diagram grows
+    # in the direction the page already scrolls. Width -- the one axis the prose
+    # column pins -- comes from the widest rank, not from the longest chain.
+    bandh = [max(size[n["id"]][1] for n in nodes if rank[n["id"]] == r)
+             for r in range(nranks)]
+    members = [sorted((n for n in nodes if rank[n["id"]] == r),
+                      key=lambda n: row[n["id"]]) for r in range(nranks)]
+    groupw = [sum(size[n["id"]][0] for n in g) + ROW_GAP * (len(g) - 1)
+              for g in members]
+    body_w = max(groupw)
 
-    colx, x = [], MARGIN
-    for r in range(nranks):
-        colx.append(x)
-        x += colw[r] + (gapw[r] if r < len(gapw) else RANK_GAP)
-    rowy, y = [], MARGIN + TITLE_H
-    for k in range(nrows):
-        rowy.append(y)
-        y += rowh[k] + ROW_GAP
-
-    boxes = {}
-    placed = []
-    for n in nodes:
-        w, h = size[n["id"]]
-        r, k = rank[n["id"]], row[n["id"]]
-        bx = colx[r] + (colw[r] - w) // 2
-        by = rowy[k] + (rowh[k] - h) // 2
-        box = {"id": n["id"], "x": bx, "y": by, "w": w, "h": h,
-               "label": n["label"], "kind": n.get("kind", "service"),
-               "src": src_list(n)}
-        boxes[n["id"]] = box
-        placed.append(box)
-
-    # Empty full-height strips between rank columns. Routing never leaves them.
-    corridor = [colx[r] + colw[r] + gapw[r] // 2 for r in range(nranks - 1)]
-    band_end = max(b["y"] + b["h"] for b in placed)
-
-    faces = {n["id"]: {"L": [], "R": []} for n in nodes}
+    # An edge crosses the corridors between ranks. Which faces it leaves and
+    # enters, and which corridors it crosses, follow from the ranks alone.
     plans = []
-    lanes = 0
     for e in edges:
-        a, b = e["from"], e["to"]
-        if e.get("back"):            # validated backward, so always L -> R
-            kind, fa, fb = "lane", "L", "R"
-        elif rank[b] == rank[a] + 1:
-            kind, fa, fb = "direct", "R", "L"
-        elif rank[b] > rank[a]:
-            kind, fa, fb = "lane", "R", "L"
+        ra, rb = rank[e["from"]], rank[e["to"]]
+        if e.get("back"):            # validated backward, so always T -> B
+            kind, fa, fb = "lane", "T", "B"
+        elif rb == ra + 1:
+            kind, fa, fb = "direct", "B", "T"
+        elif rb > ra:
+            kind, fa, fb = "lane", "B", "T"
         else:
-            kind, fa, fb = "lane", "L", "R"
-        if kind == "lane":
-            lanes += 1
-        faces[a][fa].append(len(plans))
-        faces[b][fb].append(len(plans))
-        plans.append({"e": e, "kind": kind, "fa": fa, "fb": fb})
+            kind, fa, fb = "lane", "T", "B"
+        if kind == "direct":
+            crossed = [ra]
+        else:                        # out through one corridor, in through another
+            crossed = sorted({ra if rb > ra else ra - 1,
+                              rb - 1 if rb > ra else rb})
+        plans.append({"e": e, "kind": kind, "fa": fa, "fb": fb, "crossed": crossed})
+
+    # Every crossing gets its own line in the corridor, and the corridor is deep
+    # enough to hold them all. Sharing a line would be harmless between bare
+    # arrows, but a label's knockout erases whatever else runs along it, and the
+    # arrow then reads as if it belonged to that label.
+    LINE = EF + 10
+    lines, crossing = {}, {}
+    for pi, plan in enumerate(plans):
+        for r in plan["crossed"]:
+            lines[(pi, r)] = crossing.get(r, 0)
+            crossing[r] = crossing.get(r, 0) + 1
+    gaph = [max(RANK_GAP, crossing.get(r, 0) * LINE + 24) for r in range(nranks - 1)]
+
+    bandy, y = [], MARGIN + TITLE_H
+    for r in range(nranks):
+        bandy.append(y)
+        y += bandh[r] + (gaph[r] if r < len(gaph) else 0)
+
+    # A rank is packed as one block, in row order, and slid under the boxes that
+    # feed it, so a child sits below its parent instead of on a global column
+    # grid that can pull it to the far side of the page. The block is then
+    # clamped into the widest rank's extent, so placing a rank can never widen
+    # the canvas -- the widest rank alone sets the width, however deep the graph.
+    # ponytail: one anchor per rank, so with several parents a child sits near,
+    # not under, its own; per-node placement with overlap resolution if a real
+    # diagram reads badly.
+    boxes, placed = {}, []
+    for r, group in enumerate(members):
+        anchors = [boxes[e["from"]]["x"] + boxes[e["from"]]["w"] // 2
+                   for e in edges
+                   if rank[e["to"]] == r and rank[e["from"]] < r]
+        x = (sum(anchors) // len(anchors) - groupw[r] // 2 if anchors
+             else MARGIN + (body_w - groupw[r]) // 2)
+        x = max(MARGIN, min(x, MARGIN + body_w - groupw[r]))
+        for n in group:
+            w, h = size[n["id"]]
+            box = {"id": n["id"], "x": x, "y": bandy[r] + (bandh[r] - h) // 2,
+                   "w": w, "h": h,
+                   "label": n["label"], "kind": n.get("kind", "service"),
+                   "src": src_labels(n), "src_full": src_list(n)}
+            boxes[n["id"]] = box
+            placed.append(box)
+            x += w + ROW_GAP
+
+    # Empty full-width bands between the rank rows. Routing never leaves them.
+    corridor = [bandy[r] + bandh[r] + gaph[r] // 2 for r in range(nranks - 1)]
+    body_right = max(b["x"] + b["w"] for b in placed)
+
+    def crossing_y(pi, r):
+        return corridor[r] + (2 * lines[(pi, r)] - (crossing[r] - 1)) * LINE // 2
+
+    faces = {n["id"]: {"T": [], "B": []} for n in nodes}
+    for pi, plan in enumerate(plans):
+        faces[plan["e"]["from"]][plan["fa"]].append(pi)
+        faces[plan["e"]["to"]][plan["fb"]].append(pi)
 
     port = {}
     for nid, sides in faces.items():
         box = boxes[nid]
         for side, members in sides.items():
-            # ponytail: a 44px face holds ~44 distinct integer ports, so beyond
+            # ponytail: a 96px face holds ~96 distinct integer ports, so beyond
             # that two edges share a start pixel. Guidance is 6-12 nodes; widen
             # the box by face degree if a diagram ever really needs more.
             for i, pi in enumerate(members):
-                port[(pi, nid, side)] = box["y"] + box["h"] * (i + 1) // (len(members) + 1)
+                port[(pi, nid, side)] = box["x"] + box["w"] * (i + 1) // (len(members) + 1)
 
     routed = []
+    lane_labels = []
     lane_i = 0
+    lane_right = 0
     for pi, plan in enumerate(plans):
         e = plan["e"]
         a, b = boxes[e["from"]], boxes[e["to"]]
-        ra, rb = rank[e["from"]], rank[e["to"]]
-        y1 = port[(pi, e["from"], plan["fa"])]
-        y2 = port[(pi, e["to"], plan["fb"])]
-        ax = a["x"] + a["w"] if plan["fa"] == "R" else a["x"]
-        bx = b["x"] if plan["fb"] == "L" else b["x"] + b["w"]
+        x1 = port[(pi, e["from"], plan["fa"])]
+        x2 = port[(pi, e["to"], plan["fb"])]
+        ay = a["y"] + a["h"] if plan["fa"] == "B" else a["y"]
+        by = b["y"] if plan["fb"] == "T" else b["y"] + b["h"]
         if plan["kind"] == "direct":
-            if y1 == y2:
-                pts = [(ax, y1), (bx, y2)]
-            else:
-                xm = corridor[ra]
-                pts = [(ax, y1), (xm, y1), (xm, y2), (bx, y2)]
+            ym = crossing_y(pi, plan["crossed"][0])
+            pts = [(x1, ay), (x1, ym), (x2, ym), (x2, by)]
         else:
-            # Must stay inside the corridor: outside it the run re-enters a box.
-            # ponytail: many lane edges share a nudge rather than widen the gap.
-            room = RANK_GAP // 2 - 8
-            nudge = max(-room, min(room, (2 * lane_i - (lanes - 1)) * 3))
-            gy = band_end + LANE_GAP * (lane_i + 1)
-            c1 = corridor[ra if rb > ra else ra - 1] + nudge
-            c2 = corridor[rb - 1 if rb > ra else rb] + nudge
-            pts = [(ax, y1), (c1, y1), (c1, gy), (c2, gy), (c2, y2), (bx, y2)]
+            # Out past the right edge of the body, where nothing else runs.
+            gx = body_right + LANE_GAP * (lane_i + 1)
+            c1 = crossing_y(pi, plan["crossed"][0 if plan["fa"] == "B" else -1])
+            c2 = crossing_y(pi, plan["crossed"][-1 if plan["fa"] == "B" else 0])
+            pts = [(x1, ay), (x1, c1), (gx, c1), (gx, c2), (x2, c2), (x2, by)]
+            lane_right = max(lane_right, gx)
             lane_i += 1
         routed.append({"pts": pts, "label": e.get("label", ""), "dashed": False})
+        # Label here, not in check_layout, for two reasons: a lane label belongs
+        # on the outboard run (index 2) and nowhere near the corridors the
+        # direct labels use, and a label right of the body has to be inside the
+        # canvas rather than clipped by it.
+        if e.get("label"):
+            routed[-1]["rect"] = label_rect(
+                e["label"], pts, 2 if plan["kind"] == "lane" else None)
+            if plan["kind"] == "lane":
+                lane_labels.append(routed[-1]["rect"])
+
+    # Lane labels go past the outermost lane, all of them, not each beside its
+    # own. Lanes are LANE_GAP apart, so a label centred on one -- or merely
+    # started at one -- covers the lanes outboard of it, and the knockout that
+    # keeps the label legible then erases those arrows where it lands.
+    for rect in lane_labels:
+        rect["x"] = lane_right + 6
+        rect["cx"] = rect["x"] + rect["w"] // 2
+
+    right = max([body_right, lane_right]
+                + [e["rect"]["x"] + e["rect"]["w"] for e in routed if e.get("rect")])
 
     title = d.get("title", "")
     width, height, kinds, legend_y = canvas(
-        max(b["x"] + b["w"] for b in placed) + MARGIN,
-        band_end + LANE_GAP * lanes + MARGIN, title, placed)
+        right + MARGIN, max(b["y"] + b["h"] for b in placed) + MARGIN,
+        title, placed)
     return {"w": width, "h": height, "title": title,
             "nodes": placed, "edges": routed, "kinds": kinds,
             "legend_y": legend_y, "seq": False}
@@ -583,7 +649,7 @@ def layout_sequence(d):
     parts, msgs = d["participants"], d["messages"]
     idx = {p["id"]: i for i, p in enumerate(parts)}
     headw = [max(MIN_W, 2 * PAD_X + max(len(p["label"]) * NCW,
-                                        max((len(s) * SCW for s in src_list(p)),
+                                        max((len(s) * SCW for s in src_labels(p)),
                                             default=0)))
              for p in parts]
 
@@ -627,11 +693,11 @@ def layout_sequence(d):
 
     boxes = []
     for i, p in enumerate(parts):
-        src = src_list(p)
+        src = src_labels(p)
         boxes.append({"id": p["id"], "x": cx[i] - headw[i] // 2, "y": head_y,
                       "w": headw[i], "h": HEAD_H + SRC_H * len(src),
                       "label": p["label"], "kind": p.get("kind", "service"),
-                      "src": src, "lab_h": HEAD_H})
+                      "src": src, "src_full": src_list(p), "lab_h": HEAD_H})
     title = d.get("title", "")
     width, height, kinds, legend_y = canvas(
         max(cx[-1] + headw[-1] // 2 + SELF_W, right) + MARGIN,
@@ -643,14 +709,17 @@ def layout_sequence(d):
 
 # ----------------------------------------------------------------- collision
 
-def label_rect(text, pts):
+def label_rect(text, pts, seg=None):
     """Centre the label on the first longest segment, ties to the earlier one.
 
     Interior segments only when the route bends: the first and last are stubs
-    against the node faces, and a label there rides up onto the box.
+    against the node faces, and a label there rides up onto the box. `seg` pins
+    the choice, for a route with one run that is deliberately out of the way.
     """
     segments = range(len(pts) - 1)
-    if len(pts) > 2:
+    if seg is not None:
+        segments = [seg]
+    elif len(pts) > 2:
         segments = range(1, len(pts) - 2)
     best, best_len = None, -1
     for i in segments:
@@ -660,7 +729,11 @@ def label_rect(text, pts):
             best, best_len = ((x1 + x2) // 2, (y1 + y2) // 2), span
     w = len(text) * ECW + 8
     h = EF + 6
-    return {"cx": best[0], "cy": best[1], "x": best[0] - w // 2,
+    # A label wider than the run it names would hang off the left of the canvas
+    # and be clipped. Slide it back on: it still covers its own arrow, and if it
+    # now sits on a box, check_layout says so.
+    x = max(0, best[0] - w // 2)
+    return {"cx": x + w // 2, "cy": best[1], "x": x,
             "y": best[1] - h // 2, "w": w, "h": h, "text": text}
 
 
@@ -674,13 +747,14 @@ def check_layout(scene, name):
     labels = []
     for edge in scene["edges"]:
         if edge["label"]:
-            edge["rect"] = label_rect(edge["label"], edge["pts"])
+            edge.setdefault("rect", label_rect(edge["label"], edge["pts"]))
             labels.append(edge["rect"])
     for rect in labels:
         for box in scene["nodes"]:
             if overlaps(rect, box):
                 err("E_LABEL_OVER_NODE", name,
-                    "edge label %r sits on node %r. Move one to a different row."
+                    "edge label %r sits on node %r. Shorten the label, or move "
+                    "one of them to a different row."
                     % (rect["text"], box["id"]))
     for i, a in enumerate(labels):
         for b in labels[i + 1:]:
@@ -704,7 +778,8 @@ def svg_text(cls, x, y, text, cw, anchor="middle"):
 
 def render(scene, uid):
     marker = "dg%s-ar" % uid
-    out = ['<svg class="dg" viewBox="0 0 %d %d" width="%d" height="%d" role="img" '
+    out = ['<div class="dg-wrap">'
+           '<svg class="dg" viewBox="0 0 %d %d" width="%d" height="%d" role="img" '
            'aria-label="%s" xmlns="http://www.w3.org/2000/svg">'
            % (scene["w"], scene["h"], scene["w"], scene["h"],
               html.escape(scene["title"] or "diagram", quote=True))]
@@ -734,6 +809,8 @@ def render(scene, uid):
     for box in scene["nodes"]:
         rx = box["h"] // 2 if box["kind"] == "terminal" else 6
         out.append('<g class="dg-n k-%s">' % box["kind"])
+        if box.get("src_full"):
+            out.append("<title>%s</title>" % esc(", ".join(box["src_full"])))
         out.append('<rect x="%d" y="%d" width="%d" height="%d" rx="%d"/>'
                    % (box["x"], box["y"], box["w"], box["h"], rx))
         lab_h = box.get("lab_h", BOX_H)
@@ -765,7 +842,7 @@ def render(scene, uid):
                                 SCW, "start"))
             x += 20 + len(kind) * SCW + 18
         out.append("</g>")
-    out.append("</svg>")
+    out.append("</svg></div>")
     return "\n".join(out)
 
 
@@ -797,6 +874,14 @@ def compile_one(path, root, uid):
     if scene is None:
         return None
     check_layout(scene, name)
+    if not scene["seq"] and scene["w"] > COLUMN_W:
+        # Width comes from the widest rank, so this is always reachable: a
+        # shorter label or one fewer row. A sequence has no such lever -- its
+        # participants are side by side by definition -- so it scrolls instead.
+        err("E_TOO_WIDE", name,
+            "%d px wide, max %d -- wider than the prose column. Shorten the "
+            "longest labels in the widest rank, or split the diagram."
+            % (scene["w"], COLUMN_W))
     return None if len(FINDINGS) > start else render(scene, uid)
 
 
@@ -847,8 +932,14 @@ def build(draft, root):
 # ------------------------------------------------------------------ selftest
 
 def check_geometry(page):
-    """The load-bearing invariant: boxes never overlap, edges never cross one."""
+    """The load-bearing invariant: boxes never overlap, edges never cross one,
+    and nothing drawn falls outside the canvas that has to hold it."""
     for i, svg in enumerate(re.findall(r"<svg.*?</svg>", page, re.S)):
+        canvas_w = int(re.search(r'viewBox="0 0 (\d+)', svg).group(1))
+        for x, w in re.findall(r'<rect class="dg-elb" x="(-?\d+)" y="-?\d+" '
+                               r'width="(\d+)"', svg):
+            assert 0 <= int(x) and int(x) + int(w) <= canvas_w, \
+                "diagram %d: an edge label is clipped by the canvas" % i
         boxes = [tuple(int(v) for v in m) for m in re.findall(
             r'<rect x="(\d+)" y="(\d+)" width="(\d+)" height="(\d+)" rx="\d+"/>', svg)]
         boxes = [b for b in boxes if b[2] > 20]          # skip legend swatches
@@ -886,6 +977,10 @@ def selftest():
         second = compile_one(str(path), str(here), 0)
         assert first == second, "%s is not deterministic" % path.name
         assert first.isascii(), "%s emitted non-ASCII" % path.name
+        if json.loads(path.read_text(encoding="utf-8"))["type"] != "sequence":
+            wide = int(re.search(r'viewBox="0 0 (\d+)', first).group(1))
+            assert wide <= COLUMN_W, ("%s is %dpx, past the prose column"
+                                      % (path.name, wide))
 
     del FINDINGS[:]
     out = build(str(draft), str(here))
@@ -901,12 +996,14 @@ def selftest():
     ids = re.findall(r'<marker id="([^"]+)"', one)
     assert len(ids) == len(set(ids)), "duplicate marker ids: %s" % ids
     assert "<script" not in one.lower(), "output must not carry script"
+    assert one.count('<div class="dg-wrap">') == len(files), "an svg is unwrapped"
     external = [u for u in re.findall(r"https?://[^\s\"')]+", one)
                 if "www.w3.org" not in u]
     assert not external, "output reaches the network: %s" % external
     check_geometry(one)
-    print("selftest OK: %d diagrams, %d markers, 2 passes each; "
-          "no overlaps, no edge crosses a node" % (len(files), len(ids)))
+    print("selftest OK: %d diagrams, %d markers, 2 passes each; every graph "
+          "inside the %dpx column, no overlaps, no edge crosses a node"
+          % (len(files), len(ids), COLUMN_W))
     return 0
 
 

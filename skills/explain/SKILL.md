@@ -26,8 +26,9 @@ Topic: $ARGUMENTS
    Skip the diagram when the prose already says it.
 
 3. **Write one JSON per placeholder**, beside the draft, named `<name>.<type>.json`.
-   Supply semantics only. Cite real code with `src: "path/to/file.py:42"` — it is checked
-   against the repo. See `reference.md` for the field list and a worked example per type.
+   Supply semantics only. Cite real code with `src: "path/to/file.py:42"` — the whole path
+   is checked against the repo, and the box prints `file.py:42` with the full path in its
+   tooltip. See `reference.md` for the field list and a worked example per type.
 
 4. **Compile.** `compile.py` sits in this skill's own directory — use that absolute path
    (`${CLAUDE_PLUGIN_ROOT}/skills/explain/compile.py` when the plugin root is set).
@@ -47,12 +48,22 @@ Topic: $ARGUMENTS
 
 ## Rules
 
-- **Labels are printable ASCII**, ≤48 chars for nodes, ≤32 for edges. Width is pinned to
+- **Labels are printable ASCII**, ≤48 chars for nodes, ≤32 for edges, ≤91 for a title —
+  a title is a full-width line, so it alone can outgrow the column. Width is pinned to
   the character count, which non-ASCII breaks — so it is rejected rather than guessed at.
 - **One idea per diagram.** Six to twelve nodes. Split rather than crowd.
-- **Omit `rank` and `row` first.** The compiler layers by dependency depth and declaration
-  order, which is usually right. Add hints only where the default reads badly, and
-  all-or-nothing: every node gets a `rank`, or none does.
+- **Diagrams share the prose margins.** A graph is capped at the 960px column and never
+  scaled down, so `E_TOO_WIDE` means real editing: shorten the longest labels in the
+  widest rank, or split the diagram. Ranks run *down* the page, so length is free and
+  width is not.
+- **Sequences are the exception.** Participants sit side by side, so a wide one scrolls
+  sideways inside the column instead of shrinking. Three or four participants fit; more
+  is a scroll, and usually two diagrams.
+- **Omit `rank` and `row` first.** The compiler stacks ranks down the page by dependency
+  depth, packs each rank in declaration order, and slides it under the boxes that feed
+  it, so a child sits below its parent. That is usually right. Add hints
+  only where the default reads badly, and all-or-nothing: every node gets a `rank`, or
+  none does.
 - **Edges must connect different ranks.** Auto-layout guarantees this; if you hint ranks
   by hand and two connected nodes land on the same one, give one a different rank.
 - **Mark retries and loops** with `"back": true` so they route outside the diagram body.

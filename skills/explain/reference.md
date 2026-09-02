@@ -31,7 +31,7 @@ engine and differ only in what you call them.
 | Field | Required | Type | Default |
 |---|---|---|---|
 | `type` | yes | `architecture` \| `workflow` \| `dataflow` \| `lifecycle` | — |
-| `title` | no | string | none |
+| `title` | no | printable ASCII, 1–91 | none |
 | `nodes` | yes | list, ≥1 | — |
 | `edges` | no | list | `[]` |
 
@@ -42,9 +42,19 @@ engine and differ only in what you call them.
 | `id` | yes | string, unique | — |
 | `label` | yes | printable ASCII, 1–48 | — |
 | `kind` | no | `service` \| `store` \| `external` \| `terminal` | `service` |
-| `rank` | no | int — stage along the flow | dependency depth |
-| `row` | no | int — lane across it | declaration order |
+| `rank` | no | int — stage down the flow | dependency depth |
+| `row` | no | int — order across the rank | declaration order |
 | `src` | no | string or list of `path` / `path:line` | none |
+
+Ranks stack down the page and rows spread across it, so a long chain costs height, which
+is free, and only the widest rank costs width, which the prose column pins. Each rank is
+packed as one block in `row` order and slid under the boxes that feed it, so children sit
+below their parent rather than on a shared column grid, and the block is then kept inside
+the widest rank's extent — no rank can push the diagram wider than that one. `row` orders
+a rank; it does not pin an x position.
+
+`src` is validated in full and printed as the file name and line — the directory is in
+the box's tooltip, not in its width.
 
 **`edges[i]`**
 
@@ -72,14 +82,19 @@ is a rectangle, so a long label always fits.
 }
 ```
 
-`participants[i]`: `id` (req, unique) · `label` (req, ASCII ≤48) · `kind` · `src`.
-Needs at least two.
+`title` takes the same 91-char cap as a graph title. `participants[i]`: `id` (req,
+unique) · `label` (req, ASCII ≤48) · `kind` · `src`. Needs at least two.
 
 `messages[i]`: `from` (req) · `to` (req) · `label` (ASCII ≤40) ·
 `style` (`call` | `return` | `async`, default `call`). Needs at least one.
 
 `from == to` draws a self-call loop. Lane spacing widens automatically so message labels
 never collide — no hints needed anywhere in a sequence diagram.
+
+A sequence is the one diagram that is horizontal by nature: its participants cannot be
+stacked. Five heads already exceed the prose column, so a wide sequence scrolls sideways
+inside it rather than being scaled below prose size. Keep to three or four participants
+where the story allows.
 
 ## Rule codes
 
@@ -110,8 +125,9 @@ Everything is reported in one pass, then the compiler exits 1 having written not
 | `E_SRC_ESCAPE` | absolute, or outside `--root` | cite a file inside the repo |
 | `E_SRC_MISSING` | no such file under `--root` | correct the path |
 | `E_SRC_LINE` | file is shorter than the cited line | correct the line number |
-| `E_LABEL_OVER_NODE` | an edge label lands on a box | move a node to a different `row` |
+| `E_LABEL_OVER_NODE` | an edge label lands on a box | shorten the label, or move a node to a different `row` |
 | `E_LABEL_OVER_LABEL` | two edge labels collide | shorten one, or move a node |
+| `E_TOO_WIDE` | a graph is wider than the 960px prose column | shorten the longest labels in the widest rank, or split it — sequences are exempt and scroll instead |
 | `E_PLACEHOLDER_MISSING` | `{{diagram: x.json}}` has no such file | add the file or fix the name |
 | `E_PLACEHOLDER_ESCAPE` | `{{diagram: ...}}` points outside the draft directory | keep diagrams beside the draft |
 
@@ -126,7 +142,7 @@ One runnable file per type in `examples/`, all five wired into a page by
 | `deploy.workflow.json` | a retry loop via `"back": true` |
 | `login.sequence.json` | `return` messages and a self-call |
 | `ingest.dataflow.json` | a straight pipeline, no hints at all |
-| `order.lifecycle.json` | explicit `rank`/`row` lanes, plus a loop back to an earlier state |
+| `order.lifecycle.json` | explicit `rank`/`row` order, plus a loop back to an earlier state |
 
 Rebuild them, and check the whole thing still holds, with:
 
