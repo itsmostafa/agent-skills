@@ -42,9 +42,14 @@ engine and differ only in what you call them.
 | `id` | yes | string, unique | — |
 | `label` | yes | printable ASCII, 1–48 | — |
 | `kind` | no | `service` \| `store` \| `external` \| `terminal` | `service` |
-| `rank` | no | int — stage along the flow | dependency depth |
+| `rank` | no | int — stage down the flow | dependency depth |
 | `row` | no | int — lane across it | declaration order |
 | `src` | no | string or list of `path` / `path:line` | none |
+
+Ranks stack down the page and rows spread across it, so a long chain costs height, which
+is free, and only the widest rank costs width, which the prose column pins. `src` is
+validated in full and printed as the file name and line — the directory is in the box's
+tooltip, not in its width.
 
 **`edges[i]`**
 
@@ -81,6 +86,11 @@ Needs at least two.
 `from == to` draws a self-call loop. Lane spacing widens automatically so message labels
 never collide — no hints needed anywhere in a sequence diagram.
 
+A sequence is the one diagram that is horizontal by nature: its participants cannot be
+stacked. Five heads already exceed the prose column, so a wide sequence scrolls sideways
+inside it rather than being scaled below prose size. Keep to three or four participants
+where the story allows.
+
 ## Rule codes
 
 Everything is reported in one pass, then the compiler exits 1 having written nothing.
@@ -110,8 +120,9 @@ Everything is reported in one pass, then the compiler exits 1 having written not
 | `E_SRC_ESCAPE` | absolute, or outside `--root` | cite a file inside the repo |
 | `E_SRC_MISSING` | no such file under `--root` | correct the path |
 | `E_SRC_LINE` | file is shorter than the cited line | correct the line number |
-| `E_LABEL_OVER_NODE` | an edge label lands on a box | move a node to a different `row` |
+| `E_LABEL_OVER_NODE` | an edge label lands on a box | shorten the label, or move a node to a different `row` |
 | `E_LABEL_OVER_LABEL` | two edge labels collide | shorten one, or move a node |
+| `E_TOO_WIDE` | a graph is wider than the 960px prose column | shorten the longest labels in the widest row, or split it — sequences are exempt and scroll instead |
 | `E_PLACEHOLDER_MISSING` | `{{diagram: x.json}}` has no such file | add the file or fix the name |
 | `E_PLACEHOLDER_ESCAPE` | `{{diagram: ...}}` points outside the draft directory | keep diagrams beside the draft |
 
