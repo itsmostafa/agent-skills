@@ -48,7 +48,8 @@ Topic: $ARGUMENTS
 
 ## Rules
 
-- **Labels are printable ASCII**, ≤48 chars for nodes, ≤32 for edges. Width is pinned to
+- **Labels are printable ASCII**, ≤48 chars for nodes, ≤32 for edges, ≤91 for a title —
+  a title is a full-width line, so it alone can outgrow the column. Width is pinned to
   the character count, which non-ASCII breaks — so it is rejected rather than guessed at.
 - **One idea per diagram.** Six to twelve nodes. Split rather than crowd.
 - **Diagrams share the prose margins.** A graph is capped at the 960px column and never

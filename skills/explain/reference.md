@@ -31,7 +31,7 @@ engine and differ only in what you call them.
 | Field | Required | Type | Default |
 |---|---|---|---|
 | `type` | yes | `architecture` \| `workflow` \| `dataflow` \| `lifecycle` | — |
-| `title` | no | string | none |
+| `title` | no | printable ASCII, 1–91 | none |
 | `nodes` | yes | list, ≥1 | — |
 | `edges` | no | list | `[]` |
 
@@ -82,8 +82,8 @@ is a rectangle, so a long label always fits.
 }
 ```
 
-`participants[i]`: `id` (req, unique) · `label` (req, ASCII ≤48) · `kind` · `src`.
-Needs at least two.
+`title` takes the same 91-char cap as a graph title. `participants[i]`: `id` (req,
+unique) · `label` (req, ASCII ≤48) · `kind` · `src`. Needs at least two.
 
 `messages[i]`: `from` (req) · `to` (req) · `label` (ASCII ≤40) ·
 `style` (`call` | `return` | `async`, default `call`). Needs at least one.

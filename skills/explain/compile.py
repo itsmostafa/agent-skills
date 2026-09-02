@@ -36,6 +36,10 @@ MSG_STYLES = ("call", "return", "async")
 
 MAX_NODE_LABEL, MAX_EDGE_LABEL, MAX_MSG_LABEL = 48, 32, 40
 COLUMN_W = 960           # the prose column, 60rem, in px -- see body{} in CSS
+# A title is a full-width line of its own, so it alone can push a graph past the
+# column: (COLUMN_W - 2 * MARGIN) // TITLE_CW. Capped here, where the fix is to
+# shorten the title, rather than reported later as a diagram that is too wide.
+MAX_TITLE = 91
 
 NODE_SPEC = {
     "id": (str, True), "label": (str, True), "kind": (str, False),
@@ -267,6 +271,8 @@ def check_graph(d, root, name):
     start = len(FINDINGS)
     if not check_obj(d, GRAPH_SPEC, name):
         return False
+    if d.get("title"):
+        check_label(d["title"], MAX_TITLE, "%s.title" % name)
     nodes, edges = d["nodes"], d.get("edges") or []
     if not nodes:
         err("E_EMPTY", "%s.nodes" % name, "a diagram needs at least one node")
@@ -320,6 +326,8 @@ def check_sequence(d, root, name):
     start = len(FINDINGS)
     if not check_obj(d, SEQ_SPEC, name):
         return False
+    if d.get("title"):
+        check_label(d["title"], MAX_TITLE, "%s.title" % name)
     parts, msgs = d["participants"], d["messages"]
     if len(parts) < 2:
         err("E_EMPTY", "%s.participants" % name, "a sequence needs at least two")
@@ -583,6 +591,7 @@ def layout_graph(d, name):
                 port[(pi, nid, side)] = box["x"] + box["w"] * (i + 1) // (len(members) + 1)
 
     routed = []
+    lane_labels = []
     lane_i = 0
     lane_right = 0
     for pi, plan in enumerate(plans):
@@ -609,15 +618,18 @@ def layout_graph(d, name):
         # direct labels use, and a label right of the body has to be inside the
         # canvas rather than clipped by it.
         if e.get("label"):
-            rect = label_rect(e["label"], pts,
-                              2 if plan["kind"] == "lane" else None)
+            routed[-1]["rect"] = label_rect(
+                e["label"], pts, 2 if plan["kind"] == "lane" else None)
             if plan["kind"] == "lane":
-                # Beside the lane, not centred on it. A lane runs LANE_GAP from
-                # the body, so a label wider than twice that would reach back
-                # over the boxes it was routed around.
-                rect["x"] = pts[2][0] + 6
-                rect["cx"] = rect["x"] + rect["w"] // 2
-            routed[-1]["rect"] = rect
+                lane_labels.append(routed[-1]["rect"])
+
+    # Lane labels go past the outermost lane, all of them, not each beside its
+    # own. Lanes are LANE_GAP apart, so a label centred on one -- or merely
+    # started at one -- covers the lanes outboard of it, and the knockout that
+    # keeps the label legible then erases those arrows where it lands.
+    for rect in lane_labels:
+        rect["x"] = lane_right + 6
+        rect["cx"] = rect["x"] + rect["w"] // 2
 
     right = max([body_right, lane_right]
                 + [e["rect"]["x"] + e["rect"]["w"] for e in routed if e.get("rect")])
