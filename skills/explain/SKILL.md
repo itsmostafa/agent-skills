@@ -53,13 +53,14 @@ Topic: $ARGUMENTS
 - **One idea per diagram.** Six to twelve nodes. Split rather than crowd.
 - **Diagrams share the prose margins.** A graph is capped at the 960px column and never
   scaled down, so `E_TOO_WIDE` means real editing: shorten the longest labels in the
-  widest row, or split the diagram. Ranks run *down* the page, so length is free and
+  widest rank, or split the diagram. Ranks run *down* the page, so length is free and
   width is not.
 - **Sequences are the exception.** Participants sit side by side, so a wide one scrolls
   sideways inside the column instead of shrinking. Three or four participants fit; more
   is a scroll, and usually two diagrams.
 - **Omit `rank` and `row` first.** The compiler stacks ranks down the page by dependency
-  depth and spreads rows across it in declaration order, which is usually right. Add hints
+  depth, packs each rank in declaration order, and slides it under the boxes that feed
+  it, so a child sits below its parent. That is usually right. Add hints
   only where the default reads badly, and all-or-nothing: every node gets a `rank`, or
   none does.
 - **Edges must connect different ranks.** Auto-layout guarantees this; if you hint ranks

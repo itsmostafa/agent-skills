@@ -43,13 +43,18 @@ engine and differ only in what you call them.
 | `label` | yes | printable ASCII, 1–48 | — |
 | `kind` | no | `service` \| `store` \| `external` \| `terminal` | `service` |
 | `rank` | no | int — stage down the flow | dependency depth |
-| `row` | no | int — lane across it | declaration order |
+| `row` | no | int — order across the rank | declaration order |
 | `src` | no | string or list of `path` / `path:line` | none |
 
 Ranks stack down the page and rows spread across it, so a long chain costs height, which
-is free, and only the widest rank costs width, which the prose column pins. `src` is
-validated in full and printed as the file name and line — the directory is in the box's
-tooltip, not in its width.
+is free, and only the widest rank costs width, which the prose column pins. Each rank is
+packed as one block in `row` order and slid under the boxes that feed it, so children sit
+below their parent rather than on a shared column grid, and the block is then kept inside
+the widest rank's extent — no rank can push the diagram wider than that one. `row` orders
+a rank; it does not pin an x position.
+
+`src` is validated in full and printed as the file name and line — the directory is in
+the box's tooltip, not in its width.
 
 **`edges[i]`**
 
@@ -122,7 +127,7 @@ Everything is reported in one pass, then the compiler exits 1 having written not
 | `E_SRC_LINE` | file is shorter than the cited line | correct the line number |
 | `E_LABEL_OVER_NODE` | an edge label lands on a box | shorten the label, or move a node to a different `row` |
 | `E_LABEL_OVER_LABEL` | two edge labels collide | shorten one, or move a node |
-| `E_TOO_WIDE` | a graph is wider than the 960px prose column | shorten the longest labels in the widest row, or split it — sequences are exempt and scroll instead |
+| `E_TOO_WIDE` | a graph is wider than the 960px prose column | shorten the longest labels in the widest rank, or split it — sequences are exempt and scroll instead |
 | `E_PLACEHOLDER_MISSING` | `{{diagram: x.json}}` has no such file | add the file or fix the name |
 | `E_PLACEHOLDER_ESCAPE` | `{{diagram: ...}}` points outside the draft directory | keep diagrams beside the draft |
 
@@ -137,7 +142,7 @@ One runnable file per type in `examples/`, all five wired into a page by
 | `deploy.workflow.json` | a retry loop via `"back": true` |
 | `login.sequence.json` | `return` messages and a self-call |
 | `ingest.dataflow.json` | a straight pipeline, no hints at all |
-| `order.lifecycle.json` | explicit `rank`/`row` lanes, plus a loop back to an earlier state |
+| `order.lifecycle.json` | explicit `rank`/`row` order, plus a loop back to an earlier state |
 
 Rebuild them, and check the whole thing still holds, with:
 
