@@ -486,14 +486,16 @@ def layout_graph(d, name):
 
     size = {n["id"]: node_size(n) for n in nodes}
     nranks = max(rank.values()) + 1
-    nrows = max(row.values()) + 1
     # Ranks stack down the page and rows spread across it, so the diagram grows
     # in the direction the page already scrolls. Width -- the one axis the prose
     # column pins -- comes from the widest rank, not from the longest chain.
-    colw = [max(size[n["id"]][0] for n in nodes if row[n["id"]] == k)
-            for k in range(nrows)]
     bandh = [max(size[n["id"]][1] for n in nodes if rank[n["id"]] == r)
              for r in range(nranks)]
+    members = [sorted((n for n in nodes if rank[n["id"]] == r),
+                      key=lambda n: row[n["id"]]) for r in range(nranks)]
+    groupw = [sum(size[n["id"]][0] for n in g) + ROW_GAP * (len(g) - 1)
+              for g in members]
+    body_w = max(groupw)
 
     # An edge crosses the corridors between ranks. Which faces it leaves and
     # enters, and which corridors it crosses, follow from the ranks alone.
@@ -527,27 +529,36 @@ def layout_graph(d, name):
             crossing[r] = crossing.get(r, 0) + 1
     gaph = [max(RANK_GAP, crossing.get(r, 0) * LINE + 24) for r in range(nranks - 1)]
 
-    colx, x = [], MARGIN
-    for k in range(nrows):
-        colx.append(x)
-        x += colw[k] + ROW_GAP
     bandy, y = [], MARGIN + TITLE_H
     for r in range(nranks):
         bandy.append(y)
         y += bandh[r] + (gaph[r] if r < len(gaph) else 0)
 
-    boxes = {}
-    placed = []
-    for n in nodes:
-        w, h = size[n["id"]]
-        r, k = rank[n["id"]], row[n["id"]]
-        bx = colx[k] + (colw[k] - w) // 2
-        by = bandy[r] + (bandh[r] - h) // 2
-        box = {"id": n["id"], "x": bx, "y": by, "w": w, "h": h,
-               "label": n["label"], "kind": n.get("kind", "service"),
-               "src": src_labels(n), "src_full": src_list(n)}
-        boxes[n["id"]] = box
-        placed.append(box)
+    # A rank is packed as one block, in row order, and slid under the boxes that
+    # feed it, so a child sits below its parent instead of on a global column
+    # grid that can pull it to the far side of the page. The block is then
+    # clamped into the widest rank's extent, so placing a rank can never widen
+    # the canvas -- the widest rank alone sets the width, however deep the graph.
+    # ponytail: one anchor per rank, so with several parents a child sits near,
+    # not under, its own; per-node placement with overlap resolution if a real
+    # diagram reads badly.
+    boxes, placed = {}, []
+    for r, group in enumerate(members):
+        anchors = [boxes[e["from"]]["x"] + boxes[e["from"]]["w"] // 2
+                   for e in edges
+                   if rank[e["to"]] == r and rank[e["from"]] < r]
+        x = (sum(anchors) // len(anchors) - groupw[r] // 2 if anchors
+             else MARGIN + (body_w - groupw[r]) // 2)
+        x = max(MARGIN, min(x, MARGIN + body_w - groupw[r]))
+        for n in group:
+            w, h = size[n["id"]]
+            box = {"id": n["id"], "x": x, "y": bandy[r] + (bandh[r] - h) // 2,
+                   "w": w, "h": h,
+                   "label": n["label"], "kind": n.get("kind", "service"),
+                   "src": src_labels(n), "src_full": src_list(n)}
+            boxes[n["id"]] = box
+            placed.append(box)
+            x += w + ROW_GAP
 
     # Empty full-width bands between the rank rows. Routing never leaves them.
     corridor = [bandy[r] + bandh[r] + gaph[r] // 2 for r in range(nranks - 1)]
@@ -598,8 +609,15 @@ def layout_graph(d, name):
         # direct labels use, and a label right of the body has to be inside the
         # canvas rather than clipped by it.
         if e.get("label"):
-            routed[-1]["rect"] = label_rect(
-                e["label"], pts, 2 if plan["kind"] == "lane" else None)
+            rect = label_rect(e["label"], pts,
+                              2 if plan["kind"] == "lane" else None)
+            if plan["kind"] == "lane":
+                # Beside the lane, not centred on it. A lane runs LANE_GAP from
+                # the body, so a label wider than twice that would reach back
+                # over the boxes it was routed around.
+                rect["x"] = pts[2][0] + 6
+                rect["cx"] = rect["x"] + rect["w"] // 2
+            routed[-1]["rect"] = rect
 
     right = max([body_right, lane_right]
                 + [e["rect"]["x"] + e["rect"]["w"] for e in routed if e.get("rect")])
@@ -850,7 +868,7 @@ def compile_one(path, root, uid):
         # participants are side by side by definition -- so it scrolls instead.
         err("E_TOO_WIDE", name,
             "%d px wide, max %d -- wider than the prose column. Shorten the "
-            "longest labels in the widest row, or split the diagram."
+            "longest labels in the widest rank, or split the diagram."
             % (scene["w"], COLUMN_W))
     return None if len(FINDINGS) > start else render(scene, uid)
 
