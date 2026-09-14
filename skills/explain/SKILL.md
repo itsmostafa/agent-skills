@@ -1,6 +1,7 @@
 ---
 name: explain
 description: Explain a topic or part of the repository simply for someone new to the codebase and save it as an HTML file, with deterministically compiled architecture, workflow, sequence, data-flow, and lifecycle diagrams. Use when the user types /explain <topic>.
+disable-model-invocation: true
 ---
 
 # Explain
