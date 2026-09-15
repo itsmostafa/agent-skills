@@ -16,6 +16,7 @@
       "strict": false,
       "skills": [
         "./skills/explain",
+        "./skills/readme-marketer",
         "./skills/systems-thinking",
         "./skills/taskfile",
         "./skills/writing-clearly-and-concisely"
