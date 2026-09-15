@@ -14,6 +14,8 @@ agent-skills/
 │   │   ├── compile.py         # Deterministic diagram compiler
 │   │   ├── reference.md       # Diagram IR field list and rule codes
 │   │   └── SKILL.md           # Explains a topic as a self-contained HTML page
+│   ├── readme-marketer/
+│   │   └── SKILL.md           # Rewrites READMEs as project front pages
 │   ├── systems-thinking/
 │   │   └── SKILL.md           # Cause-and-effect reasoning for complex problems
 │   ├── taskfile/
@@ -30,6 +32,7 @@ agent-skills/
 ## Skills
 
 - `explain`: Explains a topic or part of a repository as a self-contained HTML page, with deterministically compiled architecture, workflow, sequence, data-flow, and lifecycle diagrams.
+- `readme-marketer`: Rewrites technical READMEs into project front pages that improve onboarding and conversion, without em dashes.
 - `systems-thinking`: Analyzes complex problems, root causes, constraints, tradeoffs, and potential side effects.
 - `taskfile`: Helps create, modify, and optimize Taskfiles using version 3 syntax.
 - `writing-clearly-and-concisely`: Applies practical rules for clear, concise prose and avoids common AI writing patterns.
@@ -98,6 +101,7 @@ To add a new skill to this repository:
    ```json
    "skills": [
      "./skills/explain",
+     "./skills/readme-marketer",
      "./skills/systems-thinking",
      "./skills/taskfile",
      "./skills/writing-clearly-and-concisely",
