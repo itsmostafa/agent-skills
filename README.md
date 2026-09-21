@@ -34,7 +34,7 @@ agent-skills/
 ## Skills
 
 - `explain`: Explains a topic or part of a repository as a self-contained HTML page, with deterministically compiled architecture, workflow, sequence, data-flow, and lifecycle diagrams.
-- `minimalist`: Forces the simplest solution that works: question the need (YAGNI), standard library before custom code, native platform features before new dependencies. Supports `lite`, `full`, and `ultra` intensity levels.
+- `minimalist`: Forces the simplest solution that works: question the need (YAGNI), standard library before custom code, native platform features before new dependencies.
 - `readme-marketer`: Rewrites technical READMEs into project front pages that improve onboarding and conversion, without em dashes.
 - `systems-thinking`: Analyzes complex problems, root causes, constraints, tradeoffs, and potential side effects.
 - `taskfile`: Helps create, modify, and optimize Taskfiles using version 3 syntax.
