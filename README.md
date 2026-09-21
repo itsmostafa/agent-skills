@@ -14,6 +14,8 @@ agent-skills/
 │   │   ├── compile.py         # Deterministic diagram compiler
 │   │   ├── reference.md       # Diagram IR field list and rule codes
 │   │   └── SKILL.md           # Explains a topic as a self-contained HTML page
+│   ├── minimalist/
+│   │   └── SKILL.md           # Laziest working solution: YAGNI, stdlib first
 │   ├── readme-marketer/
 │   │   └── SKILL.md           # Rewrites READMEs as project front pages
 │   ├── systems-thinking/
@@ -32,6 +34,7 @@ agent-skills/
 ## Skills
 
 - `explain`: Explains a topic or part of a repository as a self-contained HTML page, with deterministically compiled architecture, workflow, sequence, data-flow, and lifecycle diagrams.
+- `minimalist`: Forces the simplest solution that works: question the need (YAGNI), standard library before custom code, native platform features before new dependencies. Supports `lite`, `full`, and `ultra` intensity levels.
 - `readme-marketer`: Rewrites technical READMEs into project front pages that improve onboarding and conversion, without em dashes.
 - `systems-thinking`: Analyzes complex problems, root causes, constraints, tradeoffs, and potential side effects.
 - `taskfile`: Helps create, modify, and optimize Taskfiles using version 3 syntax.
@@ -101,6 +104,7 @@ To add a new skill to this repository:
    ```json
    "skills": [
      "./skills/explain",
+     "./skills/minimalist",
      "./skills/readme-marketer",
      "./skills/systems-thinking",
      "./skills/taskfile",
