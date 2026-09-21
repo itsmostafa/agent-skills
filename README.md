@@ -1,6 +1,6 @@
 # agent-skills
 
-A curated repository of custom AI agent skills and automation workflows. These skills help agents like Claude Code and OpenAI Codex follow my preferred engineering standards, practices, and workflows.
+A curated repository of custom AI agent skills and automation workflows. These skills help agents like Claude Code, OpenAI Codex, and pi follow my preferred engineering standards, practices, and workflows.
 
 ## Directory Structure
 
@@ -84,6 +84,28 @@ Verify with `codex plugin list`. To pull later changes:
 
 ```bash
 codex plugin marketplace upgrade itsmostafa
+```
+
+### Installing in pi
+
+[pi](https://pi.dev) discovers any directory containing a `SKILL.md` under its skill roots, so a clone is all it takes.
+
+#### Global (all projects)
+
+```bash
+git clone https://github.com/itsmostafa/agent-skills ~/.pi/agent/skills/agent-skills
+```
+
+#### Single project
+
+```bash
+git clone https://github.com/itsmostafa/agent-skills .pi/skills/agent-skills
+```
+
+Project skills load once the project is trusted. Skills appear on the next `pi` start as `/skill:<name>`. To pull later changes:
+
+```bash
+git -C ~/.pi/agent/skills/agent-skills pull
 ```
 
 ### Adding New Skills
