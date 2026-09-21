@@ -55,7 +55,7 @@ list is the deliverable; a review that rewrites the code wasn't asked for.
 
 ## Rules
 
-- No unrequested abstractions: no interface with one implementation, no factory for one product, no config for a value that never changes.
+- No unrequested abstractions: no interface with one implementation, no factory for one product, no config for a value that never changes — but a value that models the physical world or a third-party system does change, so name it and leave it tunable.
 - No boilerplate, no scaffolding "for later", later can scaffold for itself.
 - Deletion over addition. Boring over clever, clever is what someone decodes at 3am.
 - Fewest files possible, shortest working diff wins.
@@ -92,9 +92,5 @@ Never simplify away: input validation at trust boundaries, error handling that
 prevents data loss, security measures, accessibility basics, anything
 explicitly requested. User insists on the full version → build it, no
 re-arguing.
-
-Code that meets the physical world or someone else's system keeps its tuning
-knob. Clocks drift, sensors read a few percent off, remote APIs throttle
-differently than documented — leave the constant adjustable, not inlined.
 
 The shortest path to done is the right path.
