@@ -1,6 +1,6 @@
 # agent-skills
 
-A curated repository of custom AI agent skills and automation workflows. These skills help agents like Claude Code and OpenAI Codex follow my preferred engineering standards, practices, and workflows.
+A curated repository of custom AI agent skills and automation workflows. These skills help agents like Claude Code, OpenAI Codex, and pi follow my preferred engineering standards, practices, and workflows.
 
 ## Directory Structure
 
@@ -14,6 +14,8 @@ agent-skills/
 │   │   ├── compile.py         # Deterministic diagram compiler
 │   │   ├── reference.md       # Diagram IR field list and rule codes
 │   │   └── SKILL.md           # Explains a topic as a self-contained HTML page
+│   ├── minimalist/
+│   │   └── SKILL.md           # Laziest working solution: YAGNI, stdlib first
 │   ├── readme-marketer/
 │   │   └── SKILL.md           # Rewrites READMEs as project front pages
 │   ├── systems-thinking/
@@ -32,6 +34,7 @@ agent-skills/
 ## Skills
 
 - `explain`: Explains a topic or part of a repository as a self-contained HTML page, with deterministically compiled architecture, workflow, sequence, data-flow, and lifecycle diagrams.
+- `minimalist`: Forces the simplest solution that works: question the need (YAGNI), standard library before custom code, native platform features before new dependencies.
 - `readme-marketer`: Rewrites technical READMEs into project front pages that improve onboarding and conversion, without em dashes.
 - `systems-thinking`: Analyzes complex problems, root causes, constraints, tradeoffs, and potential side effects.
 - `taskfile`: Helps create, modify, and optimize Taskfiles using version 3 syntax.
@@ -83,6 +86,28 @@ Verify with `codex plugin list`. To pull later changes:
 codex plugin marketplace upgrade itsmostafa
 ```
 
+### Installing in pi
+
+[pi](https://pi.dev) discovers any directory containing a `SKILL.md` under its skill roots, so a clone is all it takes.
+
+#### Global (all projects)
+
+```bash
+git clone https://github.com/itsmostafa/agent-skills ~/.pi/agent/skills/agent-skills
+```
+
+#### Single project
+
+```bash
+git clone https://github.com/itsmostafa/agent-skills .pi/skills/agent-skills
+```
+
+Project skills load once the project is trusted. Skills appear on the next `pi` start as `/skill:<name>`. To pull later changes:
+
+```bash
+git -C ~/.pi/agent/skills/agent-skills pull
+```
+
 ### Adding New Skills
 
 To add a new skill to this repository:
@@ -101,6 +126,7 @@ To add a new skill to this repository:
    ```json
    "skills": [
      "./skills/explain",
+     "./skills/minimalist",
      "./skills/readme-marketer",
      "./skills/systems-thinking",
      "./skills/taskfile",

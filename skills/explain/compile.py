@@ -547,7 +547,7 @@ def layout_graph(d, name):
     # grid that can pull it to the far side of the page. The block is then
     # clamped into the widest rank's extent, so placing a rank can never widen
     # the canvas -- the widest rank alone sets the width, however deep the graph.
-    # ponytail: one anchor per rank, so with several parents a child sits near,
+    # one anchor per rank, so with several parents a child sits near,
     # not under, its own; per-node placement with overlap resolution if a real
     # diagram reads badly.
     boxes, placed = {}, []
@@ -584,7 +584,7 @@ def layout_graph(d, name):
     for nid, sides in faces.items():
         box = boxes[nid]
         for side, members in sides.items():
-            # ponytail: a 96px face holds ~96 distinct integer ports, so beyond
+            # a 96px face holds ~96 distinct integer ports, so beyond
             # that two edges share a start pixel. Guidance is 6-12 nodes; widen
             # the box by face degree if a diagram ever really needs more.
             for i, pi in enumerate(members):
