@@ -8,11 +8,10 @@ description: >
   fifty. Supports intensity levels: lite, full (default), ultra. Use on ANY
   coding task: writing, adding, refactoring, fixing, reviewing, or designing
   code, and choosing libraries or dependencies. Also use whenever the user
-  says "minimalist", "be lazy", "lazy mode", "simplest solution", "minimal
-  solution", "yagni", "do less", or "shortest path", or complains about
-  over-engineering, bloat, boilerplate, or unnecessary dependencies. Do NOT
-  use for non-coding requests (general knowledge, prose, translation,
-  summaries, recipes).
+  asks for the simplest, smallest, or laziest way to do something, invokes
+  YAGNI, or complains about over-engineering, bloat, boilerplate, or
+  unnecessary dependencies. Do NOT use for non-coding requests (general
+  knowledge, prose, translation, summaries, recipes).
 argument-hint: "[lite|full|ultra]"
 ---
 
@@ -24,8 +23,9 @@ code is the code never written.
 
 ## Persistence
 
-ACTIVE EVERY RESPONSE. No drift back to over-building. Still active if
-unsure.
+Applies to every response for the rest of the session. Default level:
+**full**. Switch with `/minimalist lite|full|ultra`; say "stop minimalist"
+to turn it off.
 
 ## The ladder
 
@@ -33,7 +33,7 @@ Stop at the first rung that holds:
 
 1. **Does this need to exist at all?** Speculative need = skip it (YAGNI)
 2. **Already in this codebase?** A helper, util, type, or pattern that already lives here → reuse it. Look before you write; re-implementing what's a few files over is the most common slop.
-3. **Stdlib does it?** Use it unless an existing package dependency does the same with less code.
+3. **Stdlib does it?** Use it.
 4. **Native platform feature covers it?** `<input type="date">` over a picker lib, CSS over JS, DB constraint over app code.
 5. **Already-installed dependency solves it?** Use it. Never add a new one for what a few lines can do.
 6. **Can it be one line?** One line.
@@ -64,12 +64,10 @@ every sibling caller still broken. Fix it once, where all callers route through.
 
 ## Output
 
-Code first. Then at most three short lines: what was skipped, when to add it.
-No essays, no feature tours, no design notes. If the explanation is longer
-than the code, delete the explanation, every paragraph defending a
-simplification is complexity smuggled back in as prose. Explanation the user
-explicitly asked for (a report, a walkthrough, per-phase notes) is not debt,
-give it in full, the rule is only against unrequested prose.
+Code first, then say briefly what was skipped and when to add it. Don't
+defend the simplification at length — unrequested prose is complexity
+smuggled back in. Explanation the user explicitly asked for (a report, a
+walkthrough, per-phase notes) is not debt, give it in full.
 
 Pattern: `[code] → skipped: [X], add when [Y].`
 
@@ -99,9 +97,9 @@ change touches, the actual flow — before picking a rung. Laziness that skips
 comprehension to ship a small diff is the dangerous kind: it dresses up as
 efficiency and ships a confident wrong fix. Read fully, then be lazy.
 
-Hardware is never the ideal on paper: a real clock drifts, a real sensor
-reads off, a PCA9685 runs a few percent fast. Leave the calibration knob, not
-just less code, the physical world needs tuning a minimal model can't see.
+Code that touches the physical world keeps its calibration knob: real clocks
+drift and real sensors read off by a few percent, and a minimal model can't
+see the offset.
 
 Lazy code without its check is unfinished. Non-trivial logic (a branch, a
 loop, a parser, a money/security path) leaves ONE runnable check behind, the
