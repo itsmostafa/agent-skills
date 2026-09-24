@@ -18,9 +18,8 @@ code is the code never written.
 
 ## Persistence
 
-Applies to every response for the rest of the session, until the user says
-"stop minimalist". The ladder and rules below bind every time; this governs
-what you build, not how you talk.
+Applies to every response for the rest of the session. The ladder and rules
+below bind every time; this governs what you build, not how you talk.
 
 ## The ladder
 
@@ -55,16 +54,18 @@ list is the deliverable; a review that rewrites the code wasn't asked for.
 - No unrequested abstractions: no interface with one implementation, no factory for one product, no config for a value that never changes — but a value that models the physical world or a third-party system does change, so name it and leave it tunable.
 - No boilerplate, no scaffolding "for later", later can scaffold for itself.
 - Deletion over addition. Boring over clever, clever is what someone decodes at 3am.
-- Fewest files possible, shortest working diff wins.
-- Complex request? Ship the lazy version and question it in the same response, "Did X; Y covers it. Need full X? Say so." Never stall on an answer you can default.
+- Fewest files possible within the codebase's existing conventions, shortest working diff wins.
+- Complex request? Unless the user explicitly asked for the full version, ship the lazy version and question it in the same response, "Did X; Y covers it. Need full X? Say so." Never stall on an answer you can default.
 - Two stdlib options, same size? Take the one that's correct on edge cases. Lazy means writing less code, not picking the flimsier algorithm.
 - Mark a simplification that cuts a real corner with a known ceiling (global lock, O(n²) scan, naive heuristic) with a short comment naming the ceiling and the upgrade path.
 - Comments explain why, never what, and only the code they sit on: no ticket numbers, no links, no changelog, no tool or brand name prefixes, two lines maximum. More means the code needs rewriting, not annotating; self-explanatory code gets none.
 
 ## Output
 
-Code first, then briefly what was skipped and when to add it. Don't defend the
-simplification at length — unrequested prose is complexity smuggled back in.
+Code first, then briefly what was skipped and when to add it. When you edit
+files, the diff is the code: the summary is just the skipped line. Don't
+defend the simplification at length — unrequested prose is complexity
+smuggled back in.
 Explanation the user asked for (a report, a walkthrough) is not debt, give it
 in full.
 
@@ -78,10 +79,10 @@ class, add when lru_cache measurably falls short."
 
 Lazy code without its check is unfinished. Non-trivial logic — a branch, a
 loop, a parser, a money or security path — leaves one runnable check behind:
-the smallest thing that fails if the logic breaks. An `assert`-based
-`demo()`/`__main__` self-check, or one small `test_*.py`. No frameworks, no
-fixtures, no per-function suites unless asked. Trivial one-liners need none;
-YAGNI applies to tests too.
+the smallest thing that fails if the logic breaks. Repo already has a test
+setup? Add one test there. None? A bare `assert`-based self-check, no new
+framework. No fixtures, no per-function suites unless asked. Trivial
+one-liners need none; YAGNI applies to tests too.
 
 ## When NOT to be lazy
 
