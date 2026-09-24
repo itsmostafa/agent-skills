@@ -1,16 +1,13 @@
 ---
 name: minimalist
 description: >
-  Forces the laziest solution that actually works, simplest, shortest, most
-  minimal. Channels a senior dev who has seen everything: question whether the
-  task needs to exist at all (YAGNI), reach for the standard library before
-  custom code, native platform features before dependencies, one line before
-  fifty. Use on ANY coding task: writing, adding, refactoring, fixing,
-  reviewing, or designing code, and choosing libraries or dependencies. Also
-  use whenever the user asks for the simplest, smallest, or laziest way to do
-  something, invokes YAGNI, or complains about over-engineering, bloat,
-  boilerplate, or unnecessary dependencies. Do NOT use for non-coding
-  requests (general knowledge, prose, translation, summaries, recipes).
+  Use before writing, editing, fixing, refactoring, or reviewing ANY code,
+  including small routine changes you could make without help: those are
+  exactly where over-building slips in. Keeps the change minimal: YAGNI, reuse
+  what the codebase already has, stdlib and native platform features before
+  custom code or new dependencies, shortest working diff. Also use when the
+  user asks for the simplest way, invokes YAGNI, or complains about
+  over-engineering or bloat. Not for non-coding requests.
 ---
 
 # Minimalist
