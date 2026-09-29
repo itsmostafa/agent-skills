@@ -41,10 +41,8 @@ Use this skill whenever you write prose for humans:
 The skill uses progressive disclosure to save context:
 
 - **SKILL.md** (~1,000 tokens) loads first with the core rules
-- **Reference files** (1,000-4,500 tokens each) load only when needed
+- **Reference files** (1,000-8,000 tokens each) load only when needed
 - **Most tasks need only one file**: `03-elementary-principles-of-composition.md`
-
-For tight context situations, dispatch a subagent with your draft and the relevant section file.
 
 ## Key Features
 
@@ -76,9 +74,9 @@ The skill identifies and eliminates common LLM writing patterns:
 | Section | File | Tokens | Content |
 |---------|------|--------|---------|
 | Grammar & punctuation | `02-elementary-rules-of-usage.md` | ~2,500 | Comma rules, possessives, sentence structure |
-| Composition principles | `03-elementary-principles-of-composition.md` | ~4,500 | Active voice, concision, paragraph structure |
+| Composition principles | `03-elementary-principles-of-composition.md` | ~8,000 | Active voice, concision, paragraph structure |
 | Formatting | `04-a-few-matters-of-form.md` | ~1,000 | Headings, quotations, formatting conventions |
-| Word choice | `05-words-and-expressions-commonly-misused.md` | ~4,000 | Common errors, word selection |
+| Word choice | `05-words-and-expressions-commonly-misused.md` | ~5,000 | Common errors, word selection |
 | AI patterns | `signs-of-ai-writing.md` | ~25,000 | Wikipedia editors' field guide to AI detection |
 
 ## Usage Examples
