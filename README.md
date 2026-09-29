@@ -25,8 +25,8 @@ agent-skills/
 │   ├── taskfile/
 │   │   └── SKILL.md           # Taskfile creation and optimization guidance
 │   └── writing-clearly-and-concisely/
-│       ├── elements-of-style/ # Detailed writing reference material
 │       ├── SKILL.md           # Clear, concise prose guidelines
+│       ├── sense-of-style.md  # Notes on Pinker's The Sense of Style
 │       └── signs-of-ai-writing.md
 ├── .gitignore                 # Ignored subdirectories and environment metadata
 ├── LICENSE                    # MIT License

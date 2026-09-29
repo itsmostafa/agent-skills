@@ -1,13 +1,13 @@
 # Writing Clearly and Concisely
 
-A skill that applies William Strunk Jr.'s timeless writing principles to produce clearer, stronger, more professional prose while avoiding common AI writing patterns.
+A skill that applies Steven Pinker's *The Sense of Style* to produce clear prose that readers outside your head can follow, and strips the hype and filler that make blog posts, social posts, and docs read as AI-written.
 
 ## Purpose
 
 This skill helps you write better prose for human readers. It draws from two sources:
 
-1. **The Elements of Style** (Strunk, 1918) - Time-tested rules for clear, forceful writing
-2. **AI Pattern Avoidance** - Research-backed guidance on avoiding generic, puffy language that LLMs tend to produce
+1. **The Sense of Style** (Pinker, 2014) - Guidance on clarity grounded in linguistics and cognitive science. Its "classic style" and "curse of knowledge" chapters explain why readers get lost in expert writing, which makes it well suited to technical blog posts.
+2. **AI Pattern Avoidance** - Patterns that make blogs, social posts, and docs read as machine-written (hook formulas, inflated significance, AI vocabulary), with fixes
 
 Whether you're writing documentation, commit messages, error messages, or any text humans will read, this skill helps you cut fluff and say what you mean.
 
@@ -32,7 +32,7 @@ Use this skill whenever you write prose for humans:
 ## How It Works
 
 1. **Load the skill** when writing prose for human readers
-2. **Apply Strunk's core principles** - active voice, positive form, concrete language, cut needless words
+2. **Apply Pinker's core principles** - classic style, beat the curse of knowledge, given-before-new, consistent terms
 3. **Avoid AI patterns** - no puffery, no empty phrases, no promotional adjectives
 4. **Reference detailed guides** when needed for specific rules
 
@@ -40,24 +40,23 @@ Use this skill whenever you write prose for humans:
 
 The skill uses progressive disclosure to save context:
 
-- **SKILL.md** (~1,000 tokens) loads first with the core rules
-- **Reference files** (1,000-8,000 tokens each) load only when needed
-- **Most tasks need only one file**: `03-elementary-principles-of-composition.md`
+- **SKILL.md** (~900 tokens) loads first and covers most tasks on its own
+- **Reference files** load only when needed: `signs-of-ai-writing.md` (~1,300 tokens) for blog and social posts or AI-tell reviews, `sense-of-style.md` (~1,300 tokens) for long documents or explaining edits
 
 ## Key Features
 
-### Strunk's Core Rules
+### Pinker's Core Principles
 
-The skill emphasizes these principles from *The Elements of Style*:
+The skill emphasizes these ideas from *The Sense of Style*:
 
-| Rule | Principle |
+| Idea | Principle |
 |------|-----------|
-| 10 | Use active voice |
-| 11 | Put statements in positive form |
-| 12 | Use definite, specific, concrete language |
-| 13 | Omit needless words |
-| 16 | Keep related words together |
-| 18 | Place emphatic words at end of sentence |
+| Classic style | Point the reader at the subject; cut metadiscourse and needless hedges |
+| Curse of knowledge | Write for a smart outsider; define jargon, unpack abstractions, give examples |
+| Zombie nouns | Turn nominalizations back into verbs |
+| Given before new | Start with what the reader knows; end with what's new |
+| Coherence | Call each thing by one name; make connections explicit |
+| Usage | Follow rules that aid clarity; ignore myths |
 
 ### AI Pattern Detection
 
@@ -66,18 +65,16 @@ The skill identifies and eliminates common LLM writing patterns:
 - **Puffery**: pivotal, crucial, vital, testament, enduring legacy
 - **Empty "-ing" phrases**: ensuring reliability, showcasing features
 - **Promotional adjectives**: groundbreaking, seamless, robust, cutting-edge
-- **Overused AI vocabulary**: delve, leverage, multifaceted, foster, realm, tapestry
+- **Overused AI vocabulary**: delve, leverage, foster, realm, tapestry
+- **Social-post formulas**: "Here's the thing:", broetry, engagement bait, hashtag stacks
 - **Formatting overuse**: excessive bullets, emoji decorations, bold on every other word
 
 ## Reference Files
 
 | Section | File | Tokens | Content |
 |---------|------|--------|---------|
-| Grammar & punctuation | `02-elementary-rules-of-usage.md` | ~2,500 | Comma rules, possessives, sentence structure |
-| Composition principles | `03-elementary-principles-of-composition.md` | ~8,000 | Active voice, concision, paragraph structure |
-| Formatting | `04-a-few-matters-of-form.md` | ~1,000 | Headings, quotations, formatting conventions |
-| Word choice | `05-words-and-expressions-commonly-misused.md` | ~5,000 | Common errors, word selection |
-| AI patterns | `signs-of-ai-writing.md` | ~25,000 | Wikipedia editors' field guide to AI detection |
+| Writing principles | `sense-of-style.md` | ~1,300 | Classic style, curse of knowledge, syntax, coherence, usage |
+| AI patterns | `signs-of-ai-writing.md` | ~1,300 | Content, language, social-post, and formatting patterns with fixes |
 
 ## Usage Examples
 
@@ -97,13 +94,13 @@ The skill identifies and eliminates common LLM writing patterns:
 **After:**
 > This feature uses WebSocket connections to update the dashboard in real time.
 
-### Example 3: Fixing Passive Voice
+### Example 3: Beating the Curse of Knowledge
 
 **Before:**
-> The configuration file is read by the application at startup.
+> The reconciler runs during the RC phase to handle drift.
 
 **After:**
-> The application reads the configuration file at startup.
+> Every 30 seconds, the reconciler compares the cluster's actual state with the config file and fixes any differences.
 
 ### Example 4: Removing Hedging
 
@@ -117,10 +114,10 @@ The skill identifies and eliminates common LLM writing patterns:
 
 1. **Be specific, not grandiose** - Say what it actually does, not how important it is
 2. **Cut first, add later** - Remove words until meaning suffers, then add back what's needed
-3. **Prefer active voice** - "The function returns X" beats "X is returned by the function"
-4. **State positively** - "He forgot" beats "He did not remember"
+3. **Write for an outsider** - Define terms and give an example for each abstraction
+4. **Revive zombie nouns** - "Caching cut latency" beats "The implementation of caching resulted in a reduction of latency"
 5. **Use concrete language** - "The server crashed" beats "An issue occurred"
-6. **Load reference files sparingly** - Most tasks need only `03-elementary-principles-of-composition.md`
+6. **Load reference files sparingly** - The principles in SKILL.md cover most tasks
 
 ## Directory Structure
 
@@ -128,13 +125,8 @@ The skill identifies and eliminates common LLM writing patterns:
 writing-clearly-and-concisely/
   SKILL.md                 # Main skill definition
   README.md                # This file
+  sense-of-style.md        # Notes on Pinker's The Sense of Style
   signs-of-ai-writing.md   # AI pattern detection guide
-  elements-of-style/
-    01-introductory.md
-    02-elementary-rules-of-usage.md
-    03-elementary-principles-of-composition.md
-    04-a-few-matters-of-form.md
-    05-words-and-expressions-commonly-misused.md
 ```
 
 ## Installation
@@ -150,6 +142,5 @@ Add the skill to project knowledge or paste SKILL.md contents into your conversa
 ## Attribution
 
 - Original skill by @joshuadavidthomas from [joshuadavidthomas/agent-skills](https://github.com/joshuadavidthomas/agent-skills) (MIT)
-- Adapted from [obra/the-elements-of-style](https://github.com/obra/the-elements-of-style)
-- Writing principles from *The Elements of Style* by William Strunk Jr. (1918)
-- AI pattern research from Wikipedia's field guide to AI-generated content detection
+- Writing principles summarized from *The Sense of Style* by Steven Pinker (2014)
+- AI patterns adapted from Wikipedia's field guide to AI-generated content (CC BY-SA 4.0)
