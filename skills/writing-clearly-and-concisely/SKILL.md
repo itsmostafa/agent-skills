@@ -1,6 +1,6 @@
 ---
 name: writing-clearly-and-concisely
-description: Use when writing prose humans will read—documentation, commit messages, error messages, explanations, reports, or UI text. Applies Strunk's timeless rules for clearer, stronger, more professional writing.
+description: Use when writing or editing prose humans will read—documentation, code comments, commit messages, error messages, explanations, reports, or UI text. Applies Strunk's timeless rules for clearer, stronger, more professional writing.
 ---
 
 # Writing Clearly and Concisely
@@ -8,28 +8,6 @@ description: Use when writing prose humans will read—documentation, commit mes
 ## Overview
 
 Write with clarity and force. This skill covers what to do (Strunk) and what not to do (AI patterns).
-
-## When to Use This Skill
-
-Use this skill whenever you write prose for humans:
-
-- Documentation, README files, technical explanations
-- Commit messages, pull request descriptions
-- Error messages, UI copy, help text, comments
-- Reports, summaries, or any explanation
-- Editing to improve clarity
-
-**If you're writing sentences for a human to read, use this skill.**
-
-## Limited Context Strategy
-
-When context is tight:
-
-1. Write your draft using judgment
-2. Dispatch a subagent with your draft and the relevant section file
-3. Have the subagent copyedit and return the revision
-
-Loading a single section (~1,000-4,500 tokens) instead of everything saves significant context.
 
 ## Elements of Style
 
@@ -67,12 +45,12 @@ The rules above are summarized from Strunk's original text. For complete explana
 
 | Section | File | ~Tokens |
 |---------|------|---------|
-| Grammar, punctuation, comma rules | `02-elementary-rules-of-usage.md` | 2,500 |
-| Paragraph structure, active voice, concision | `03-elementary-principles-of-composition.md` | 4,500 |
-| Headings, quotations, formatting | `04-a-few-matters-of-form.md` | 1,000 |
-| Word choice, common errors | `05-words-and-expressions-commonly-misused.md` | 4,000 |
+| Grammar, punctuation, comma rules | `elements-of-style/02-elementary-rules-of-usage.md` | 2,500 |
+| Paragraph structure, active voice, concision | `elements-of-style/03-elementary-principles-of-composition.md` | 8,000 |
+| Headings, quotations, formatting | `elements-of-style/04-a-few-matters-of-form.md` | 1,000 |
+| Word choice, common errors | `elements-of-style/05-words-and-expressions-commonly-misused.md` | 5,000 |
 
-**Most tasks need only `03-elementary-principles-of-composition.md`** — it covers active voice, positive form, concrete language, and omitting needless words.
+**Most tasks need only `elements-of-style/03-elementary-principles-of-composition.md`** — it covers active voice, positive form, concrete language, and omitting needless words.
 
 ## AI Writing Patterns to Avoid
 
