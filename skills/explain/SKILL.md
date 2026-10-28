@@ -1,6 +1,6 @@
 ---
 name: explain
-description: Explain any topic simply for a newcomer, in a form an ADHD reader can grasp fast and retain — a concept, a system, a process, or part of a codebase — and save it as an HTML page with compiled architecture, workflow, sequence, data-flow, and lifecycle diagrams. Use when the user types /explain <topic>.
+description: Explain any topic simply for a newcomer — a concept, a system, a process, or part of a codebase — and save it as an HTML page with compiled architecture, workflow, sequence, data-flow, and lifecycle diagrams. Use when the user types /explain <topic>.
 disable-model-invocation: true
 ---
 
