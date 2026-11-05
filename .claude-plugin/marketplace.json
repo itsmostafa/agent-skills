@@ -16,6 +16,7 @@
       "strict": false,
       "skills": [
         "./skills/create-pr",
+        "./skills/evidence-review",
         "./skills/explain",
         "./skills/minimalist",
         "./skills/readme-marketer",

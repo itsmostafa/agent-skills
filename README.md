@@ -11,6 +11,8 @@ agent-skills/
 ├── skills/
 │   ├── create-pr/
 │   │   └── SKILL.md           # Commits changes and opens a release-please PR
+│   ├── evidence-review/
+│   │   └── SKILL.md           # Evidence-backed review of code changes
 │   ├── explain/
 │   │   ├── examples/          # One runnable diagram per type
 │   │   ├── compile.py         # Deterministic diagram compiler
@@ -36,6 +38,7 @@ agent-skills/
 ## Skills
 
 - `create-pr`: Groups uncommitted changes into conventional commits, pushes a feature branch, and opens a GitHub PR with a release-please friendly description.
+- `evidence-review`: Reviews changes against their spec and repo conventions, reporting only evidence-backed findings.
 - `explain`: Explains a topic or part of a repository as a self-contained HTML page, with deterministically compiled architecture, workflow, sequence, data-flow, and lifecycle diagrams.
 - `minimalist`: Forces the simplest solution that works: question the need (YAGNI), standard library before custom code, native platform features before new dependencies.
 - `readme-marketer`: Rewrites technical READMEs into project front pages that improve onboarding and conversion, without em dashes.
@@ -129,6 +132,7 @@ To add a new skill to this repository:
    ```json
    "skills": [
      "./skills/create-pr",
+     "./skills/evidence-review",
      "./skills/explain",
      "./skills/minimalist",
      "./skills/readme-marketer",
