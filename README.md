@@ -103,6 +103,8 @@ Add `-l` to install for the current project only. Project packages load once the
 agent-skills/
 ├── .claude-plugin/
 │   └── marketplace.json       # Plugin catalog for Claude Code and Codex
+├── docs/
+│   └── adding-skills.md       # How to add a new skill
 ├── skills/
 │   ├── create-pr/             # Conventional commits + release-please PR
 │   ├── evidence-review/       # Evidence-backed code review
@@ -119,32 +121,7 @@ agent-skills/
 └── README.md
 ```
 
-Every skill lives in its own directory with a `SKILL.md` entry point.
-
-## Contributing
-
-Have a workflow you keep re-explaining to your agent? Turn it into a skill.
-
-1. Create `skills/new-skill/SKILL.md` with YAML frontmatter:
-   ```yaml
-   ---
-   name: new-skill
-   description: Brief description of when to use this skill.
-   ---
-   # New Skill Title
-   Instructions go here...
-   ```
-2. Register it in `.claude-plugin/marketplace.json` under the `skills` list:
-   ```json
-   "skills": [
-     "./skills/create-pr",
-     "...",
-     "./skills/new-skill"
-   ]
-   ```
-3. Open a pull request. Issues and suggestions are welcome too.
-
-If these skills save you a few corrections a day, consider [starring the repo](https://github.com/itsmostafa/agent-skills) so others can find it.
+Every skill lives in its own directory with a `SKILL.md` entry point. See [docs/adding-skills.md](docs/adding-skills.md) for how to add one.
 
 ## License
 
