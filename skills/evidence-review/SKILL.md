@@ -81,7 +81,9 @@ confidence is not evidence, and neither is code that merely looks wrong.
    written by the old version.
 5. **Attack your own findings.** For each one, look for the reason it is wrong:
    a guard upstream, a caller that never passes that input, a spec line that
-   allows it. Drop what does not survive. Most first-draft findings should not.
+   allows it, a deliberate design or security choice. Drop what does not
+   survive, and anything that would not block the change. Most first-draft
+   findings should not survive.
 6. **If already merged,** drop anything a later commit fixed.
 7. **Be honest about coverage.** If you could not verify some part (too large,
    no way to run it, missing credentials), name it under *Not verified*. Never
@@ -99,12 +101,13 @@ High-risk: <paths touched, or "none">
 [BUG | MISSING | UNNECESSARY | CONVENTION] one-line statement
 Where: file:line (for MISSING, the entry point the spec names)
 Evidence: command and output, test name, spec line, or rule
-Impact: what breaks, for whom
+Impact: what breaks, for whom (a concrete caller or scenario, not "could")
 
 Not verified: <parts you could not check, or omit>
 Tests written: <paths, or omit>
 ```
 
+- Name code by its exact identifier from the source, never a paraphrase.
 - **PASS** means nothing survived and nothing important went unchecked. That
   is a good result; do not pad it with minor findings to look thorough.
 - **PASS (partial)** means nothing survived, but a spec requirement or
