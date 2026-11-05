@@ -94,25 +94,13 @@ codex plugin marketplace upgrade itsmostafa
 
 ### Installing in pi
 
-[pi](https://pi.dev) discovers any directory containing a `SKILL.md` under its skill roots, so a clone is all it takes.
-
-#### Global (all projects)
+Install the repository as a [pi](https://pi.dev) package:
 
 ```bash
-git clone https://github.com/itsmostafa/agent-skills ~/.pi/agent/skills/agent-skills
+pi install git:github.com/itsmostafa/agent-skills
 ```
 
-#### Single project
-
-```bash
-git clone https://github.com/itsmostafa/agent-skills .pi/skills/agent-skills
-```
-
-Project skills load once the project is trusted. Skills appear on the next `pi` start as `/skill:<name>`. To pull later changes:
-
-```bash
-git -C ~/.pi/agent/skills/agent-skills pull
-```
+Add `-l` to install for the current project only. Project packages load once the project is trusted. Skills appear on the next `pi` start as `/skill:<name>`.
 
 ### Adding New Skills
 
