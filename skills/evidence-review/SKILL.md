@@ -43,8 +43,8 @@ you wrote in the report so the maintainer can keep or delete it.
 4. **CONVENTION:** a break from a written house rule, or from the way this
    repo already solves the same problem.
 
-Everything else is out of scope: style, naming, formatting, comments,
-"consider" or "might" suggestions, hypothetical future needs, and anything a
+Everything else is out of scope: style, naming, formatting, and comments
+that no written house rule covers, "consider" or "might" suggestions, hypothetical future needs, and anything a
 linter or type checker already enforces. Problems the change did not introduce
 are out of scope too, unless the change makes them reachable or worse.
 
