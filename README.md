@@ -59,6 +59,7 @@ Then get your first result in three steps:
 | `create-pr` | A release-ready PR in one command: changes grouped into conventional commits, pushed to a feature branch, with a release-please friendly description. |
 | `explain` | Onboarding docs on demand: any topic or part of your codebase becomes a self-contained HTML page with compiled architecture, workflow, sequence, data-flow, and lifecycle diagrams. |
 | `systems-thinking` | Better decisions on hard problems: cause-and-effect reasoning that surfaces root causes, constraints, tradeoffs, and side effects before you commit to a fix. |
+| `write-instructions` | Procedures that can't silently go wrong: SOPs, runbooks, and agent prompts in strict plain-English patterns, where every step has a check and every failure ends safely. |
 | `writing-clearly-and-concisely` | Prose people actually finish reading: Pinker-based style rules that cut filler, hype, and the telltale signs of AI-written text. |
 | `readme-marketer` | READMEs that convert visitors into users: a clear hook, a fast quickstart, and features framed as outcomes. (It wrote this page.) |
 | `taskfile` | Working Taskfiles on the first try: expert guidance on Taskfile v3 syntax, dependencies, variables, includes, watching, and migrating from Make. |
@@ -116,6 +117,7 @@ agent-skills/
 │   ├── readme-marketer/       # README rewrites
 │   ├── systems-thinking/      # Cause-and-effect reasoning
 │   ├── taskfile/              # Taskfile v3 guidance
+│   ├── write-instructions/    # Verifiable procedures and agent prompts
 │   └── writing-clearly-and-concisely/
 ├── LICENSE
 └── README.md
