@@ -61,6 +61,7 @@ Then get your first result in three steps:
 | `systems-thinking` | Better decisions on hard problems: cause-and-effect reasoning that surfaces root causes, constraints, tradeoffs, and side effects before you commit to a fix. |
 | `write-instructions` | Procedures that can't silently go wrong: SOPs, runbooks, and agent prompts in strict plain-English patterns, where every step has a check and every failure ends safely. |
 | `writing-clearly-and-concisely` | Prose people actually finish reading: Pinker-based style rules that cut filler, hype, and the telltale signs of AI-written text. |
+| `adhd` | Replies you can act on without rereading: the answer first, one small next step, and no wall of text. |
 | `readme-marketer` | READMEs that convert visitors into users: a clear hook, a fast quickstart, and features framed as outcomes. (It wrote this page.) |
 | `taskfile` | Working Taskfiles on the first try: expert guidance on Taskfile v3 syntax, dependencies, variables, includes, watching, and migrating from Make. |
 
@@ -107,6 +108,7 @@ agent-skills/
 ├── docs/
 │   └── adding-skills.md       # How to add a new skill
 ├── skills/
+│   ├── adhd/                  # Answer-first, scannable replies
 │   ├── create-pr/             # Conventional commits + release-please PR
 │   ├── evidence-review/       # Evidence-backed code review
 │   ├── explain/               # HTML explainers with a diagram compiler
