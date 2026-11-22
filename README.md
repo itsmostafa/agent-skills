@@ -64,6 +64,7 @@ Then get your first result in three steps:
 | `adhd` | Replies you can act on without rereading: the answer first, one small next step, and no wall of text. |
 | `readme-marketer` | READMEs that convert visitors into users: a clear hook, a fast quickstart, and features framed as outcomes. (It wrote this page.) |
 | `taskfile` | Working Taskfiles on the first try: expert guidance on Taskfile v3 syntax, dependencies, variables, includes, watching, and migrating from Make. |
+| `bruh` | Jargon translator: run `/bruh` and the agent restates its last message in plain, human language. |
 
 ## Installation Details
 
@@ -109,6 +110,7 @@ agent-skills/
 │   └── adding-skills.md       # How to add a new skill
 ├── skills/
 │   ├── adhd/                  # Answer-first, scannable replies
+│   ├── bruh/                  # Plain-language restatement of the last message
 │   ├── create-pr/             # Conventional commits + release-please PR
 │   ├── evidence-review/       # Evidence-backed code review
 │   ├── explain/               # HTML explainers with a diagram compiler

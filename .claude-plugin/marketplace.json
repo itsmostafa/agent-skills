@@ -16,6 +16,7 @@
       "strict": false,
       "skills": [
         "./skills/adhd",
+        "./skills/bruh",
         "./skills/create-pr",
         "./skills/evidence-review",
         "./skills/explain",
