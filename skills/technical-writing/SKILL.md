@@ -67,4 +67,4 @@ One document, one mode. Don't mix modes. Split and link instead.
 - Cut AI tells from every doc: stock AI vocabulary, filler, stacked hedges, and decorative formatting.
 - PR descriptions and commit messages are writing too. Every layer except Diátaxis applies to them. A PR body is a briefing that a reviewer can read in under a minute. Do not paste swarm logs, SHA lists, or metric tables. Link them.
 - Product UI strings are not documentation. Use your product's copy guidelines for those.
-- Indent code snippets with tabs. Write real paths. Make every count or tree claim true at the commit that lands it, and include the command that regenerates it.
+- Indent code snippets with tabs, except in languages that require spaces, such as YAML. Write real paths. Make every count or tree claim true at the commit that lands it, and include the command that regenerates it.
