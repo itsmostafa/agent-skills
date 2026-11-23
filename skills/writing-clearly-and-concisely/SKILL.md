@@ -47,6 +47,7 @@ Reread the draft as the outsider:
 2. Is there a concrete example near each abstraction?
 3. Is every stated fact in the source, with guesses marked as guesses?
 4. Is any sentence there to impress rather than inform?
+5. Is any placeholder such as `[Your Name]` or `(add link)` still unfilled? Fill it from the source, or tell the user which ones remain.
 
 ---
 
