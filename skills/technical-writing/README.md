@@ -26,6 +26,8 @@ Run it when you write or review a doc:
 /technical-writing Review the description for this PR.
 ```
 
+In pi, use `/skill:technical-writing`.
+
 The skill only runs when you invoke it. The agent never loads it on its own.
 
 ## Install

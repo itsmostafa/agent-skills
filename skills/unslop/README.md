@@ -26,6 +26,8 @@ Run it with the text or file you want cleaned:
 /unslop Fix the summary you just wrote.
 ```
 
+In pi, use `/skill:unslop`.
+
 The skill only runs when you invoke it. The agent never loads it on its own.
 
 ## Install
