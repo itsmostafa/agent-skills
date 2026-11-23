@@ -64,6 +64,8 @@ Then get your first result in three steps:
 | `adhd` | Replies you can act on without rereading: the answer first, one small next step, and no wall of text. |
 | `readme-marketer` | READMEs that convert visitors into users: a clear hook, a fast quickstart, and features framed as outcomes. (It wrote this page.) |
 | `taskfile` | Working Taskfiles on the first try: expert guidance on Taskfile v3 syntax, dependencies, variables, includes, watching, and migrating from Make. |
+| `technical-writing` | Docs a tired engineer understands on the first read: Diátaxis structure, Google developer style, and strict sentence rules for docs, RFCs, PR descriptions, and commit messages. Run `/technical-writing`. |
+| `unslop` | Text that doesn't read as AI-written: run `/unslop` to strip stock vocabulary, filler, hedging, and formatting tells. |
 | `bruh` | Jargon translator: run `/bruh` and the agent restates its last message in plain, human language. |
 
 ## Installation Details
@@ -121,6 +123,8 @@ agent-skills/
 │   ├── readme-marketer/       # README rewrites
 │   ├── systems-thinking/      # Cause-and-effect reasoning
 │   ├── taskfile/              # Taskfile v3 guidance
+│   ├── technical-writing/     # Layered technical-writing standard
+│   ├── unslop/                # Removes AI tells from prose
 │   ├── write-instructions/    # Verifiable procedures and agent prompts
 │   └── writing-clearly-and-concisely/
 ├── LICENSE
