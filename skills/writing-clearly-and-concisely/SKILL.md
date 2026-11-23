@@ -1,6 +1,6 @@
 ---
 name: writing-clearly-and-concisely
-description: Use when writing or editing prose humans will read—blog posts, social media posts, documentation, READMEs, announcements, explanations, reports, commit messages, error messages, or UI text. Applies Steven Pinker's classic style and curse-of-knowledge remedies so readers outside your head can follow, and strips the hype and filler that make text read as AI-written.
+description: Use when writing or editing prose humans will read: blog posts, social media posts, documentation, READMEs, announcements, explanations, reports, commit messages, error messages, or UI text. Applies Steven Pinker's classic style and curse-of-knowledge remedies so readers outside your head can follow, and strips the hype and filler that make text read as AI-written.
 ---
 
 # Writing Clearly and Concisely
@@ -22,7 +22,7 @@ Unclear writing usually comes from the curse of knowledge: the writer forgets th
 - **Keep the source's facts separate from your guesses.** Don't fill a gap with a plausible detail; mark it as an assumption or an open question.
 - **Hedge only a real doubt**, and name the doubt.
 - **Call each thing by one name.** A new word signals a new thing.
-- **State what is true** rather than what isn't: "the config loads once, at startup," not "the config isn't loaded at runtime."
+- **State what is true** rather than what isn't: "the configuration loads once, at startup," not "the configuration isn't loaded at runtime."
 - **Name the concrete thing**, not a metaconcept: "the process runs out of memory," not "memory-usage issues." Turn zombie nouns back into verbs: "perform an optimization" → "optimize."
 
 ## Sentences
@@ -35,7 +35,9 @@ Unclear writing usually comes from the curse of knowledge: the writer forgets th
 
 Specifics beat adjectives. For each "seamless," "powerful," "game-changer," scene-setting opener, or rhetorical hook, write the fact that made you reach for it, or delete the sentence. Don't format two facts as a table, bold every term, or put headings on a short post. When editing someone else's draft, cut claims nothing backs up and tell the author what you cut so they can restore it with evidence.
 
-For blog and social posts, or when reviewing a draft for AI tells, load `signs-of-ai-writing.md`. Swapping a flagged word for a synonym doesn't help; fix the sentence behind it.
+On social posts, skip hook formulas, one sentence per line, engagement bait, and hashtag stacks; make one specific point. Skip Markdown where it won't render, such as plain-text email and commit messages.
+
+For blog and social posts, or when reviewing a draft for AI tells, read `../unslop/SKILL.md` (relative to this file) and edit the draft against its rules. Where this file permits or requires something those rules forbid, follow this file. Swapping a flagged word for a synonym doesn't help; fix the sentence behind it.
 
 ## Before you finish
 
@@ -45,7 +47,8 @@ Reread the draft as the outsider:
 2. Is there a concrete example near each abstraction?
 3. Is every stated fact in the source, with guesses marked as guesses?
 4. Is any sentence there to impress rather than inform?
+5. Is any placeholder such as `[Your Name]` or `(add link)` still unfilled? Fill it from the source, or tell the user which ones remain.
 
 ---
 
-Adapted from [joshuadavidthomas/agent-skills](https://github.com/joshuadavidthomas/agent-skills) (MIT). Principles from Steven Pinker, *The Sense of Style* (2014).
+Adapted from Principles from Steven Pinker, *The Sense of Style* (2014).

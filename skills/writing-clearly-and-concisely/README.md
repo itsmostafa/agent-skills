@@ -13,7 +13,7 @@ Agent-written prose fails in two ways. It assumes the reader saw the Slack threa
 - **Facts kept apart from guesses.** The agent does not fill a gap with a plausible detail. It marks an assumption as an assumption, and hedges only a real doubt.
 - **Concrete wording.** One name per thing, "the process runs out of memory" instead of "memory-usage issues", and what is true instead of what is not.
 - **Hype replaced by the fact behind it.** For each inflated adjective or rhetorical hook, the agent writes the specific fact that prompted it, or deletes the sentence.
-- **A review pass for AI tells.** For blog and social posts, a checklist of the patterns that make text read as machine-written, each with a fix.
+- **A review pass for AI tells.** For blog and social posts, the agent edits the draft against the unslop skill's rules for patterns that make text read as machine-written.
 - **A final reread as the reader.** Four questions before delivering: are all terms known, is there an example near each abstraction, is every fact from the source, and is any sentence there to impress?
 
 ## How to use it
@@ -30,7 +30,7 @@ Edit this blog draft. It sounds like AI wrote it.
 
 ## What's inside
 
-`SKILL.md` holds the style rules and the final checklist. `signs-of-ai-writing.md` lists the patterns that mark text as AI-written, with a fix for each.
+`SKILL.md` holds the style rules and the final checklist. The AI-tell review pass reads its rules from the sibling `unslop` skill, so both skills must be installed together (the plugin install does this).
 
 Adapted from [joshuadavidthomas/agent-skills](https://github.com/joshuadavidthomas/agent-skills) (MIT). Principles from Steven Pinker, *The Sense of Style* (2014).
 
